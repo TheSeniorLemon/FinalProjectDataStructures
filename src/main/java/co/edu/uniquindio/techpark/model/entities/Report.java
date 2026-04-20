@@ -3,13 +3,12 @@ package co.edu.uniquindio.techpark.model.entities;
 import co.edu.uniquindio.techpark.model.enums.AlertType;
 import co.edu.uniquindio.techpark.model.enums.AttractionStatus;
 
-import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.Objects;
 
 public class Report {
     private String id;
-    private LocalDateTime date;
+    private String date;
     private double dailyRevenue;
     private int totalVisitors;
     private int weatherClosures;
@@ -18,7 +17,7 @@ public class Report {
     private LinkedList<String> logs;
     private LinkedList<Attraction> attractionsSnapshot;
 
-    public Report(String id, LocalDateTime date, double dailyRevenue, int totalVisitors, int weatherClosures, int maintenanceAlerts, int totalIncidents, LinkedList<String> logs, LinkedList<Attraction> attractionsSnapshot) {
+    public Report(String id, String date, double dailyRevenue, int totalVisitors, int weatherClosures, int maintenanceAlerts, int totalIncidents, LinkedList<String> logs, LinkedList<Attraction> attractionsSnapshot) {
         this.id = id;
         this.date = date;
         this.dailyRevenue = 0.0;
@@ -37,10 +36,10 @@ public class Report {
         this.id = id;
     }
 
-    public LocalDateTime getDate() {
+    public String getDate() {
         return date;
     }
-    public void setDate(LocalDateTime date) {
+    public void setDate(String date) {
         this.date = date;
     }
 

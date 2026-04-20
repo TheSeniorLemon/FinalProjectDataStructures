@@ -2,17 +2,16 @@ package co.edu.uniquindio.techpark.model.entities;
 
 import co.edu.uniquindio.techpark.model.enums.TicketType;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 public abstract class Ticket {
     protected String id;
     protected TicketType type;
     protected double price;
-    protected LocalDateTime purchaseDate;
+    protected String purchaseDate;
     protected boolean active;
 
-    public Ticket(String id, TicketType type, double price, LocalDateTime purchaseDate) {
+    public Ticket(String id, TicketType type, double price, String purchaseDate) {
         this.id = id;
         this.type = type;
         this.price = price;
@@ -41,10 +40,10 @@ public abstract class Ticket {
         this.price = price;
     }
 
-    public LocalDateTime getPurchaseDate() {
+    public String getPurchaseDate() {
         return purchaseDate;
     }
-    public void setPurchaseDate(LocalDateTime purchaseDate) {
+    public void setPurchaseDate(String purchaseDate) {
         this.purchaseDate = purchaseDate;
     }
 

@@ -2,10 +2,8 @@ package co.edu.uniquindio.techpark.model.entities;
 
 import co.edu.uniquindio.techpark.model.enums.TicketType;
 
-import java.time.LocalDateTime;
-
 public class GeneralTicket extends Ticket {
-    public GeneralTicket(String id, TicketType type, double price, LocalDateTime purchaseDate) {
+    public GeneralTicket(String id, TicketType type, double price, String purchaseDate) {
         super(id, type, price, purchaseDate);
     }
 

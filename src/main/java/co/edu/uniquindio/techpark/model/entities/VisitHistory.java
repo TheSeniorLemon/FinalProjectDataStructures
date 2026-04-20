@@ -2,18 +2,17 @@ package co.edu.uniquindio.techpark.model.entities;
 
 import co.edu.uniquindio.techpark.model.enums.TicketType;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class VisitHistory {
     private String attractionId;
     private String attractionName;
-    private LocalDateTime dateTime;
+    private String dateTime;
     private double incurredCost;
     private TicketType ticketTypeUsed;
     private int estimatedDurationMinutes;
 
-    public VisitHistory(String attractionId, String attractionName, LocalDateTime dateTime, double incurredCost, TicketType ticketTypeUsed, int estimatedDurationMinutes) {
+    public VisitHistory(String attractionId, String attractionName, String dateTime, double incurredCost, TicketType ticketTypeUsed, int estimatedDurationMinutes) {
         this.attractionId = attractionId;
         this.attractionName = attractionName;
         this.dateTime = dateTime;
@@ -36,10 +35,10 @@ public class VisitHistory {
         this.attractionName = attractionName;
     }
 
-    public LocalDateTime getDateTime() {
+    public String getDateTime() {
         return dateTime;
     }
-    public void setDateTime(LocalDateTime dateTime) {
+    public void setDateTime(String dateTime) {
         this.dateTime = dateTime;
     }
 

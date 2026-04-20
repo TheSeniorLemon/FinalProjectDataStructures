@@ -172,6 +172,11 @@ public class Attraction {
                 '}';
     }
 
+    public int compareTo(Attraction other) {
+        if (other == null) return 1;
+        return this.name.compareToIgnoreCase(other.getName());
+    }
+
     // ----------------------------------------------------------------
     // access control
     // ----------------------------------------------------------------

@@ -2,13 +2,11 @@ package co.edu.uniquindio.techpark.model.entities;
 
 import co.edu.uniquindio.techpark.model.enums.TicketType;
 
-import java.time.LocalDateTime;
-
 public class FamilyTicket extends Ticket {
     private double discountPercentage;
     private int maxMembers;
 
-    public FamilyTicket(String id, TicketType type, double price, LocalDateTime purchaseDate, double discountPercentage, int maxMembers) {
+    public FamilyTicket(String id, TicketType type, double price, String purchaseDate, double discountPercentage, int maxMembers) {
         super(id, type, price, purchaseDate);
         this.discountPercentage = discountPercentage;
         this.maxMembers = maxMembers;

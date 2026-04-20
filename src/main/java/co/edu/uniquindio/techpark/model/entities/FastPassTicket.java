@@ -2,13 +2,12 @@ package co.edu.uniquindio.techpark.model.entities;
 
 import co.edu.uniquindio.techpark.model.enums.TicketType;
 
-import java.time.LocalDateTime;
 import java.util.LinkedList;
 
 public class FastPassTicket extends Ticket {
     private LinkedList<String> enabledAttractions;
 
-    public FastPassTicket(String id, TicketType type, double price, LocalDateTime purchaseDate, LinkedList<String> enabledAttractions) {
+    public FastPassTicket(String id, TicketType type, double price, String purchaseDate, LinkedList<String> enabledAttractions) {
         super(id, type, price, purchaseDate);
         this.enabledAttractions = enabledAttractions;
     }

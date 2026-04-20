@@ -1,18 +1,17 @@
 package co.edu.uniquindio.techpark.model.entities;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class TechnicalInspection {
     private String id;
-    private LocalDateTime dateTime;
+    private String dateTime;
     private String operatorId;
     private String operatorName;
     private String result;
     private String observations;
     private boolean successful;
 
-    public TechnicalInspection(String id, LocalDateTime dateTime, String operatorId, String operatorName, String result, String observations, boolean successful) {
+    public TechnicalInspection(String id, String dateTime, String operatorId, String operatorName, String result, String observations, boolean successful) {
         this.id = id;
         this.dateTime = dateTime;
         this.operatorId = operatorId;
@@ -29,10 +28,10 @@ public class TechnicalInspection {
         this.id = id;
     }
 
-    public LocalDateTime getDateTime() {
+    public String getDateTime() {
         return dateTime;
     }
-    public void setDateTime(LocalDateTime dateTime) {
+    public void setDateTime(String dateTime) {
         this.dateTime = dateTime;
     }
 
