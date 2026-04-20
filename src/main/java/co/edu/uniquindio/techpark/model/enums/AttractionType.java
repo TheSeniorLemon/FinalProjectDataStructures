@@ -1,9 +1,9 @@
 package co.edu.uniquindio.techpark.model.enums;
 
 public enum AttractionType {
-    AQUATIC,
-    KIDS,
+    CHILDREN,
+    ELECTRONIC_GAME,
     MECHANICAL_HEIGHT,
-    ROLLER_COASTER,
-    SHOW
+    SHOWS,
+    WATER
 }

@@ -3,6 +3,7 @@ package co.edu.uniquindio.techpark.model.entities;
 import co.edu.uniquindio.techpark.model.enums.TicketType;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public abstract class Ticket {
     protected String id;
@@ -52,6 +53,18 @@ public abstract class Ticket {
     }
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Ticket ticket = (Ticket) o;
+        return Double.compare(price, ticket.price) == 0 && active == ticket.active && Objects.equals(id, ticket.id) && type == ticket.type && Objects.equals(purchaseDate, ticket.purchaseDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, type, price, purchaseDate, active);
     }
 
     @Override

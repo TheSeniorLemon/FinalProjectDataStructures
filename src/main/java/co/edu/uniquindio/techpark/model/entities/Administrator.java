@@ -1,5 +1,6 @@
 package co.edu.uniquindio.techpark.model.entities;
 
+import co.edu.uniquindio.techpark.model.enums.AlertType;
 import co.edu.uniquindio.techpark.model.enums.UserRole;
 
 public class Administrator extends User{
