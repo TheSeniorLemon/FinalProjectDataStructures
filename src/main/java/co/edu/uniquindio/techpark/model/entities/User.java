@@ -76,4 +76,10 @@ public abstract class User {
                 ", userRole=" + userRole +
                 '}';
     }
+
+    public abstract boolean login(String email, String password);
+
+    public void logout() {
+        System.out.println("User " + name + " has logged out.");
+    }
 }
