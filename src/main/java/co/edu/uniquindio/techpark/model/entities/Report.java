@@ -2,8 +2,8 @@ package co.edu.uniquindio.techpark.model.entities;
 
 import co.edu.uniquindio.techpark.model.enums.AlertType;
 import co.edu.uniquindio.techpark.model.enums.AttractionStatus;
+import co.edu.uniquindio.techpark.model.structures.LinkedList;
 
-import java.util.LinkedList;
 import java.util.Objects;
 
 public class Report {
@@ -109,7 +109,7 @@ public class Report {
         return "Report{" +
                 "id='" + id + '\'' +
                 ", date='" + date + '\'' +
-                ", dailyRevenue=" + dailyRevenue +
+                ", dailyRevenue=" + String.format("%.2f", dailyRevenue) +
                 ", totalVisitors=" + totalVisitors +
                 ", weatherClosures=" + weatherClosures +
                 ", maintenanceAlerts=" + maintenanceAlerts +
@@ -159,7 +159,7 @@ public class Report {
 
     public void loadAttractionsSnapshot(LinkedList<Attraction> attractions) {
         if (attractions == null) return;
-        int n = attractions.size();
+        int n = attractions.getSize();
         for (int i = 0; i < n; i++) {
             Attraction a = attractions.get(i);
             if (a != null) attractionsSnapshot.add(a);
@@ -171,7 +171,7 @@ public class Report {
     // ----------------------------------------------------------------
 
     public LinkedList<Attraction> getMostVisitedAttractions() {
-        int n = attractionsSnapshot.size();
+        int n = attractionsSnapshot.getSize();
         if (n == 0) return new LinkedList<>();
 
         for (int i = 0; i < n - 1; i++) {
@@ -194,7 +194,7 @@ public class Report {
         attractionsSnapshot.remove(aj);
 
         LinkedList<Attraction> temp = new LinkedList<>();
-        int n = attractionsSnapshot.size();
+        int n = attractionsSnapshot.getSize();
         for (int k = 0; k < n; k++) {
             if (k == i) {
                 temp.add(aj);
@@ -208,7 +208,7 @@ public class Report {
     }
 
     public double getAverageWaitTime() {
-        int n = attractionsSnapshot.size();
+        int n = attractionsSnapshot.getSize();
         if (n == 0) return 0.0;
         double total = 0.0;
         int count = 0;
@@ -224,10 +224,10 @@ public class Report {
 
     public LinkedList<Attraction> getAttractionsWithMostIncidents() {
         LinkedList<Attraction> result = new LinkedList<>();
-        int n = attractionsSnapshot.size();
+        int n = attractionsSnapshot.getSize();
         for (int i = 0; i < n; i++) {
             Attraction a = attractionsSnapshot.get(i);
-            if (a != null && a.getInspections().size() > 0) {
+            if (a != null && a.getInspections().getSize() > 0) {
                 result.add(a);
             }
         }
@@ -236,7 +236,7 @@ public class Report {
 
     public LinkedList<Attraction> getAttractionsUnderMaintenance() {
         LinkedList<Attraction> result = new LinkedList<>();
-        int n = attractionsSnapshot.size();
+        int n = attractionsSnapshot.getSize();
         for (int i = 0; i < n; i++) {
             Attraction a = attractionsSnapshot.get(i);
             if (a != null && a.getStatus() == AttractionStatus.MAINTENANCE) {
@@ -263,7 +263,7 @@ public class Report {
         sb.append("----------------------------------------\n");
         sb.append("MOST VISITED ATTRACTIONS:\n");
         LinkedList<Attraction> mostVisited = getMostVisitedAttractions();
-        int top = Math.min(5, mostVisited.size());
+        int top = Math.min(5, mostVisited.getSize());
         for (int i = 0; i < top; i++) {
             Attraction a = mostVisited.get(i);
             if (a != null) {
@@ -274,8 +274,8 @@ public class Report {
             }
         }
         sb.append("----------------------------------------\n");
-        sb.append("EVENT LOG (").append(logs.size()).append(" records):\n");
-        int n = logs.size();
+        sb.append("EVENT LOG (").append(logs.getSize()).append(" records):\n");
+        int n = logs.getSize();
         for (int i = 0; i < n; i++) {
             String log = logs.get(i);
             if (log != null) sb.append("  ").append(log).append("\n");

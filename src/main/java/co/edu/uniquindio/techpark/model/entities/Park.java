@@ -2,9 +2,8 @@ package co.edu.uniquindio.techpark.model.entities;
 
 import co.edu.uniquindio.techpark.model.enums.AlertType;
 import co.edu.uniquindio.techpark.model.enums.TicketType;
-import co.edu.uniquindio.techpark.model.structures.PriorityQueue;
+import co.edu.uniquindio.techpark.model.structures.*;
 
-import java.util.LinkedList;
 import java.util.Objects;
 
 public class Park {
@@ -190,6 +189,10 @@ public class Park {
                 '}';
     }
 
+    // ----------------------------------------------------------------
+    // zone management
+    // ----------------------------------------------------------------
+
     public boolean addZone(Zone zone) {
         if (zone == null) return false;
         if (findZone(zone.getId()) != null) {
@@ -207,8 +210,8 @@ public class Park {
             System.out.println("Zone not found.");
             return false;
         }
-        if (zone.getAttractions().size() > 0) {
-            System.out.println("Cannot remove a zone with active attractions.");
+        if (zone.getAttractions().getSize() > 0) {
+            System.out.println("A zone with active attractions cannot be removed.");
             return false;
         }
         boolean result = zones.remove(zone);
@@ -219,11 +222,17 @@ public class Park {
     }
 
     public Zone findZone(String zoneId) {
-        for (Zone z : zones) {
+        int n = zones.getSize();
+        for (int i = 0; i < n; i++) {
+            Zone z = zones.get(i);
             if (z != null && z.getId().equals(zoneId)) return z;
         }
         return null;
     }
+
+    // ----------------------------------------------------------------
+    // attraction management
+    // ----------------------------------------------------------------
 
     public boolean registerAttractionInCatalog(Attraction attraction) {
         if (attraction == null) return false;
@@ -244,7 +253,10 @@ public class Park {
     }
 
     public Attraction findAttractionByName(String name) {
-        for (Attraction a : attractionCatalog.inOrder()) {
+        LinkedList<Attraction> inOrder = attractionCatalog.inOrder();
+        int n = inOrder.getSize();
+        for (int i = 0; i < n; i++) {
+            Attraction a = inOrder.get(i);
             if (a != null && a.getName().equalsIgnoreCase(name)) return a;
         }
         return null;
@@ -260,10 +272,14 @@ public class Park {
         return attractionCatalog.inOrder();
     }
 
+    // ----------------------------------------------------------------
+    // visitor and ticket management
+    // ----------------------------------------------------------------
+
     public boolean registerVisitor(Visitor visitor) {
         if (visitor == null) return false;
         if (!hasAvailableCapacity()) {
-            System.out.println("Park is full. Cannot register more visitors.");
+            System.out.println("Park full. Cannot register more visitors.");
             return false;
         }
         registeredVisitors.add(visitor);
@@ -294,7 +310,9 @@ public class Park {
     }
 
     public Visitor findVisitor(String visitorId) {
-        for (Visitor v : registeredVisitors) {
+        int n = registeredVisitors.getSize();
+        for (int i = 0; i < n; i++) {
+            Visitor v = registeredVisitors.get(i);
             if (v != null && v.getId().equals(visitorId)) return v;
         }
         return null;
@@ -310,31 +328,32 @@ public class Park {
         String ticketId = "TK-" + String.format("%04d", ticketCounter);
         String date = java.time.LocalDate.now().toString();
         Ticket ticket = null;
-
         switch (type) {
             case GENERAL:
-                ticket = new GeneralTicket(ticketId, TicketType.GENERAL, 25000.0, date);
+                ticket = new GeneralTicket(ticketId, 25000.0, date);
                 break;
             case FAMILY:
-                ticket = new FamilyTicket(ticketId, TicketType.FAMILY, 80000.0, date, 15.0, 4);
+                ticket = new FamilyTicket(ticketId, 80000.0, date, 15.0, 4);
                 break;
             case FAST_PASS:
-                ticket = new FastPassTicket(ticketId, TicketType.FAST_PASS, 50000.0, date);
+                ticket = new FastPassTicket(ticketId, 50000.0, date);
                 break;
         }
-
         if (ticket != null) {
             visitor.setTicket(ticket);
-            System.out.println("Ticket " + type + " sold to '" +
-                    visitor.getName() + "'.");
+            System.out.println(type + " ticket sold to '" + visitor.getName() + "'.");
         }
         return ticket;
     }
 
+    // ----------------------------------------------------------------
+    // operator management
+    // ----------------------------------------------------------------
+
     public boolean registerOperator(Operator operator) {
         if (operator == null) return false;
         if (findOperator(operator.getId()) != null) {
-            System.out.println("The operator already exists in the park.");
+            System.out.println("Operator already exists in the park.");
             return false;
         }
         operators.add(operator);
@@ -351,7 +370,7 @@ public class Park {
         if (operator.hasAssignedZone()) {
             Zone zone = findZone(operator.getAssignedZoneId());
             if (zone != null && !zone.hasAvailableOperator()) {
-                System.out.println("Cannot remove: the zone would be left without operators.");
+                System.out.println("Cannot remove: zone would be left without operators.");
                 return false;
             }
             if (zone != null) zone.removeOperator(operatorId);
@@ -364,18 +383,25 @@ public class Park {
     }
 
     public Operator findOperator(String operatorId) {
-        for (Operator op : operators) {
+        int n = operators.getSize();
+        for (int i = 0; i < n; i++) {
+            Operator op = operators.get(i);
             if (op != null && op.getId().equals(operatorId)) return op;
         }
         return null;
     }
 
+    // ----------------------------------------------------------------
+    // weather alert
+    // ----------------------------------------------------------------
+
     public void activateWeatherAlert(AlertType type) {
         this.weatherAlertActive = true;
         this.currentAlert = type;
         int totalClosed = 0;
-
-        for (Zone z : zones) {
+        int n = zones.getSize();
+        for (int i = 0; i < n; i++) {
+            Zone z = zones.get(i);
             if (z != null) {
                 int closed = z.closeAttractionsDueToWeather(type);
                 totalClosed += closed;
@@ -386,13 +412,11 @@ public class Park {
                 }
             }
         }
-
         String message = "WEATHER ALERT: " + type +
                 ". " + totalClosed +
                 " attractions closed. " +
                 "Please move to covered areas.";
         notifyAllVisitors(message);
-
         System.out.println("Weather alert '" + type + "' activated. " +
                 totalClosed + " attractions closed in total.");
     }
@@ -406,8 +430,14 @@ public class Park {
         System.out.println("Weather alert deactivated.");
     }
 
+    // ----------------------------------------------------------------
+    // notifications
+    // ----------------------------------------------------------------
+
     public void notifyAllVisitors(String message) {
-        for (Visitor v : registeredVisitors) {
+        int n = registeredVisitors.getSize();
+        for (int i = 0; i < n; i++) {
+            Visitor v = registeredVisitors.get(i);
             if (v != null) {
                 sendNotification(v.getId(), message);
             }
@@ -417,17 +447,15 @@ public class Park {
     public void notifyVisitorsInQueue(Attraction attraction, String message) {
         PriorityQueue<Visitor> queue = attraction.getVirtualQueue();
         if (queue.isEmpty()) return;
-
         PriorityQueue<Visitor> temp = new PriorityQueue<>();
-
         while (!queue.isEmpty()) {
-            Visitor v = queue.poll();
+            Visitor v = queue.dequeue();
             sendNotification(v.getId(), message);
-            temp.add(v);
+            temp.enqueue(v, v.getPriority());
         }
-
         while (!temp.isEmpty()) {
-            queue.add(temp.poll());
+            Visitor v = temp.dequeue();
+            queue.enqueue(v, v.getPriority());
         }
     }
 
@@ -438,6 +466,10 @@ public class Park {
         Notification notif = new Notification(notifId, message, dateTime, recipientId);
         notifications.add(notif);
     }
+
+    // ----------------------------------------------------------------
+    // routes and graph
+    // ----------------------------------------------------------------
 
     public LinkedList<Attraction> calculateOptimalRoute(Attraction origin, Attraction destination) {
         if (origin == null || destination == null) return null;
@@ -453,6 +485,10 @@ public class Park {
         return mapGraph.detectClusters();
     }
 
+    // ----------------------------------------------------------------
+    // capacity
+    // ----------------------------------------------------------------
+
     public boolean hasAvailableCapacity() {
         return currentVisitors < maxCapacity;
     }
@@ -465,6 +501,10 @@ public class Park {
         if (maxCapacity == 0) return 0.0;
         return (currentVisitors * 100.0) / maxCapacity;
     }
+
+    // ----------------------------------------------------------------
+    // start and end of the day
+    // ----------------------------------------------------------------
 
     public void startDay() {
         reportCounter++;

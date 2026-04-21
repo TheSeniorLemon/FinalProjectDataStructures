@@ -2,6 +2,9 @@ package co.edu.uniquindio.techpark.model.entities;
 
 import co.edu.uniquindio.techpark.model.enums.AlertType;
 import co.edu.uniquindio.techpark.model.enums.UserRole;
+import co.edu.uniquindio.techpark.model.structures.Graph;
+import co.edu.uniquindio.techpark.model.structures.GraphNode;
+import co.edu.uniquindio.techpark.model.structures.LinkedList;
 
 public class Administrator extends User{
     public Administrator(String id, String name, String email, String password, UserRole userRole) {

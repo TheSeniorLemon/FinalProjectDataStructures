@@ -2,12 +2,12 @@ package co.edu.uniquindio.techpark.model.entities;
 
 import co.edu.uniquindio.techpark.model.enums.AttractionStatus;
 import co.edu.uniquindio.techpark.model.enums.AttractionType;
+import co.edu.uniquindio.techpark.model.structures.LinkedList;
 import co.edu.uniquindio.techpark.model.structures.PriorityQueue;
 
-import java.util.LinkedList;
 import java.util.Objects;
 
-public class Attraction {
+public class Attraction implements Comparable<Attraction> {
     private String id;
     private String zoneId;
     private String name;
@@ -164,11 +164,12 @@ public class Attraction {
                 ", minimumAge=" + minimumAge +
                 ", additionalCost=" + additionalCost +
                 ", visitorCount=" + visitorCount +
-                ", estimatedWaitTime=" + estimatedWaitTime +
+                ", estimatedWaitTime=" + estimatedWaitTime + " min" +
                 ", status=" + status +
                 ", closureReason='" + closureReason + '\'' +
                 ", virtualQueue=" + virtualQueue +
                 ", inspections=" + inspections +
+                ", inQueue=" + virtualQueue.getSize() +
                 '}';
     }
 
@@ -279,7 +280,7 @@ public class Attraction {
     }
 
     public TechnicalInspection getLastInspection() {
-        int n = inspections.size();
+        int n = inspections.getSize();
         if (n == 0) return null;
         return inspections.get(n - 1);
     }
@@ -289,7 +290,7 @@ public class Attraction {
     // ----------------------------------------------------------------
 
     private void updateWaitTime() {
-        int inQueue = virtualQueue.size();
+        int inQueue = virtualQueue.getSize();
         if (capacityPerCycle <= 0) return;
         int cyclesNeeded = (int) Math.ceil((double) inQueue / capacityPerCycle);
         estimatedWaitTime = cyclesNeeded * 5;

@@ -3,8 +3,8 @@ package co.edu.uniquindio.techpark.model.entities;
 import co.edu.uniquindio.techpark.model.enums.TicketType;
 
 public class GeneralTicket extends Ticket {
-    public GeneralTicket(String id, TicketType type, double price, String purchaseDate) {
-        super(id, type, price, purchaseDate);
+    public GeneralTicket(String id, double price, String purchaseDate) {
+        super(id, TicketType.GENERAL, price, purchaseDate);
     }
 
     @Override

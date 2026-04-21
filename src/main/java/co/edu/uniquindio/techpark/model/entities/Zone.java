@@ -3,8 +3,8 @@ package co.edu.uniquindio.techpark.model.entities;
 import co.edu.uniquindio.techpark.model.enums.AlertType;
 import co.edu.uniquindio.techpark.model.enums.AttractionStatus;
 import co.edu.uniquindio.techpark.model.enums.AttractionType;
+import co.edu.uniquindio.techpark.model.structures.LinkedList;
 
-import java.util.LinkedList;
 import java.util.Objects;
 
 public class Zone {
@@ -127,7 +127,7 @@ public class Zone {
     }
 
     public Attraction findAttraction(String attractionId) {
-        int n = attractions.size();
+        int n = attractions.getSize();
         for (int i = 0; i < n; i++) {
             Attraction a = attractions.get(i);
             if (a != null && a.getId().equals(attractionId)) {
@@ -139,7 +139,7 @@ public class Zone {
 
     public LinkedList<Attraction> getActiveAttractions() {
         LinkedList<Attraction> active = new LinkedList<>();
-        int n = attractions.size();
+        int n = attractions.getSize();
         for (int i = 0; i < n; i++) {
             Attraction a = attractions.get(i);
             if (a != null && a.getStatus() == AttractionStatus.ACTIVE) {
@@ -151,7 +151,7 @@ public class Zone {
 
     public LinkedList<Attraction> getAttractionsByType(AttractionType type) {
         LinkedList<Attraction> result = new LinkedList<>();
-        int n = attractions.size();
+        int n = attractions.getSize();
         for (int i = 0; i < n; i++) {
             Attraction a = attractions.get(i);
             if (a != null && a.getType() == type) {
@@ -197,7 +197,7 @@ public class Zone {
     }
 
     public Operator findOperator(String operatorId) {
-        int n = operators.size();
+        int n = operators.getSize();
         for (int i = 0; i < n; i++) {
             Operator op = operators.get(i);
             if (op != null && op.getId().equals(operatorId)) {
@@ -208,11 +208,11 @@ public class Zone {
     }
 
     public boolean hasAvailableOperator() {
-        return operators.size() > 1;
+        return operators.getSize() > 1;
     }
 
     public int getOperatorCount() {
-        return operators.size();
+        return operators.getSize();
     }
 
     // ----------------------------------------------------------------
@@ -251,7 +251,7 @@ public class Zone {
 
     public int closeAttractionsDueToWeather(AlertType alert) {
         int closed = 0;
-        int n = attractions.size();
+        int n = attractions.getSize();
         for (int i = 0; i < n; i++) {
             Attraction a = attractions.get(i);
             if (a == null) continue;

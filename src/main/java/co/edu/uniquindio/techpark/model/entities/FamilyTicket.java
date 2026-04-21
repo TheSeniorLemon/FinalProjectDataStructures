@@ -6,8 +6,8 @@ public class FamilyTicket extends Ticket {
     private double discountPercentage;
     private int maxMembers;
 
-    public FamilyTicket(String id, TicketType type, double price, String purchaseDate, double discountPercentage, int maxMembers) {
-        super(id, type, price, purchaseDate);
+    public FamilyTicket(String id, double price, String purchaseDate, double discountPercentage, int maxMembers) {
+        super(id, TicketType.FAMILY, price, purchaseDate);
         this.discountPercentage = discountPercentage;
         this.maxMembers = maxMembers;
     }

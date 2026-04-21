@@ -1,14 +1,13 @@
 package co.edu.uniquindio.techpark.model.entities;
 
 import co.edu.uniquindio.techpark.model.enums.TicketType;
-
-import java.util.LinkedList;
+import co.edu.uniquindio.techpark.model.structures.LinkedList;
 
 public class FastPassTicket extends Ticket {
     private LinkedList<String> enabledAttractions;
 
-    public FastPassTicket(String id, TicketType type, double price, String purchaseDate, LinkedList<String> enabledAttractions) {
-        super(id, type, price, purchaseDate);
+    public FastPassTicket(String id, double price, String purchaseDate, LinkedList<String> enabledAttractions) {
+        super(id, TicketType.FAST_PASS, price, purchaseDate);
         this.enabledAttractions = enabledAttractions;
     }
 
@@ -44,7 +43,7 @@ public class FastPassTicket extends Ticket {
     }
 
     public boolean hasPriorityAccess(String attractionId) {
-        int n = enabledAttractions.size();
+        int n = enabledAttractions.getSize();
         for (int i = 0; i < n; i++) {
             String id = enabledAttractions.get(i);
             if (id != null && id.equals(attractionId)) {
@@ -55,7 +54,7 @@ public class FastPassTicket extends Ticket {
     }
 
     public void enableAllAttractions(LinkedList<String> ids) {
-        int n = ids.size();
+        int n = ids.getSize();
         for (int i = 0; i < n; i++) {
             addEnabledAttraction(ids.get(i));
         }

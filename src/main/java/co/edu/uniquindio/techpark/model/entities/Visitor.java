@@ -2,8 +2,8 @@ package co.edu.uniquindio.techpark.model.entities;
 
 import co.edu.uniquindio.techpark.model.enums.TicketType;
 import co.edu.uniquindio.techpark.model.enums.UserRole;
+import co.edu.uniquindio.techpark.model.structures.LinkedList;
 
-import java.util.LinkedList;
 import java.util.Set;
 
 public class Visitor extends User {
@@ -82,7 +82,7 @@ public class Visitor extends User {
                 ", height=" + height +
                 ", virtualBalance=" + virtualBalance +
                 ", profilePhoto='" + profilePhoto + '\'' +
-                ", ticket=" + ticket +
+                ", ticket=" + (ticket != null ? ticket.getType() : "none") +
                 ", visitHistory=" + visitHistory +
                 ", favoriteIds=" + favoriteIds +
                 ", id='" + id + '\'' +
