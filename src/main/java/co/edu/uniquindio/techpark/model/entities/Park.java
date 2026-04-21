@@ -253,10 +253,10 @@ public class Park {
     }
 
     public Attraction findAttractionByName(String name) {
-        LinkedList<Attraction> inOrder = attractionCatalog.inOrder();
-        int n = inOrder.getSize();
+        LinkedList<Attraction> inorder = attractionCatalog.inorder();
+        int n = inorder.getSize();
         for (int i = 0; i < n; i++) {
-            Attraction a = inOrder.get(i);
+            Attraction a = inorder.get(i);
             if (a != null && a.getName().equalsIgnoreCase(name)) return a;
         }
         return null;
@@ -269,7 +269,7 @@ public class Park {
     }
 
     public LinkedList<Attraction> listAllAttractions() {
-        return attractionCatalog.inOrder();
+        return attractionCatalog.inorder();
     }
 
     // ----------------------------------------------------------------

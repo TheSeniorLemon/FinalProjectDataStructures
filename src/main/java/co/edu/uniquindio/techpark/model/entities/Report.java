@@ -17,7 +17,7 @@ public class Report {
     private LinkedList<String> logs;
     private LinkedList<Attraction> attractionsSnapshot;
 
-    public Report(String id, String date, double dailyRevenue, int totalVisitors, int weatherClosures, int maintenanceAlerts, int totalIncidents, LinkedList<String> logs, LinkedList<Attraction> attractionsSnapshot) {
+    public Report(String id, String date) {
         this.id = id;
         this.date = date;
         this.dailyRevenue = 0.0;

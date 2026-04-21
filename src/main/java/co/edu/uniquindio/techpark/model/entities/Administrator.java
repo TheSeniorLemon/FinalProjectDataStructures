@@ -99,12 +99,12 @@ public class Administrator extends User{
 
     public void checkGraphStatus(Park park) {
         if (park == null) return;
-        Graph<Attraction> graph = park.getGraphMap();
+        Graph<Attraction> graph = park.getMapGraph();
         System.out.println("Nodes in the graph: " + graph.getNumNodes());
     }
 
     public LinkedList<GraphNode<Attraction>> detectClusters(Park park) {
         if (park == null) return null;
-        return park.getGraphMap().detectClusters();
+        return park.getMapGraph().detectClusters();
     }
 }

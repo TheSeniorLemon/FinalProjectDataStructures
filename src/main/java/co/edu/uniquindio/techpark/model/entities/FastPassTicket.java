@@ -6,9 +6,9 @@ import co.edu.uniquindio.techpark.model.structures.LinkedList;
 public class FastPassTicket extends Ticket {
     private LinkedList<String> enabledAttractions;
 
-    public FastPassTicket(String id, double price, String purchaseDate, LinkedList<String> enabledAttractions) {
+    public FastPassTicket(String id, double price, String purchaseDate) {
         super(id, TicketType.FAST_PASS, price, purchaseDate);
-        this.enabledAttractions = enabledAttractions;
+        this.enabledAttractions = new LinkedList<>();
     }
 
     public LinkedList<String> getEnabledAttractions() {
