@@ -1,6 +1,8 @@
 package co.edu.uniquindio.techpark.dataStructures;
 
-public class SimpleLinkedList<T> {
+import java.util.Iterator;
+
+public class SimpleLinkedList<T> implements Iterable<T>{
     Node<T> list;
     int size;
 
@@ -119,6 +121,25 @@ public class SimpleLinkedList<T> {
             aux = aux.getNext();
         }
         System.out.println(">> <= Last");
+    }
+
+    @Override
+    public Iterator<T> iterator(){
+        return new Iterator<T>() {
+            private Node<T> actual = list();
+
+            @Override
+            public boolean hasNext() {
+                return actual != null;
+            }
+
+            @Override
+            public T next() {
+                T data = actual.getValue();
+                actual = actual.getNext();
+                return data;
+            }
+        };
     }
 
     public boolean isEmpty() { return (list == null && size == 0); }

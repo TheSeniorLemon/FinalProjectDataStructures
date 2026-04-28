@@ -4,7 +4,6 @@ public interface ITechparkServices {
 
     public void buyTicket();
 
-    public 
 
 
 }

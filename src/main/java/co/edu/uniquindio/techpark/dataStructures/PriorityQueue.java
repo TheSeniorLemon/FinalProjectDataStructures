@@ -9,7 +9,6 @@ public class PriorityQueue<T> {
         size = 0;
     }
 
-    // Nodo interno con prioridad
     private static class NodePQ<T> {
         T value;
         int priority;
@@ -22,7 +21,7 @@ public class PriorityQueue<T> {
         }
     }
 
-    // Inserta ordenado por prioridad
+
     public void enqueue(T value, int priority) {
         NodePQ<T> newNode = new NodePQ<>(value, priority);
 
