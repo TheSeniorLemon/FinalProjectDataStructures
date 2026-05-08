@@ -6,7 +6,7 @@ import co.edu.uniquindio.techpark.model.structures.*;
 
 import java.util.Objects;
 
-public class Park {
+public final class Park {
     private String id;
     private String name;
     private int maxCapacity;
@@ -23,8 +23,9 @@ public class Park {
     private int ticketCounter;
     private int reportCounter;
     private int notificationCounter;
+    private static volatile Park instance;
 
-    public Park(String id, String name, int maxCapacity) {
+    private Park(String id, String name, int maxCapacity) {
         this.id = id;
         this.name = name;
         this.maxCapacity = maxCapacity;
@@ -187,6 +188,29 @@ public class Park {
                 ", reportCounter=" + reportCounter +
                 ", notificationCounter=" + notificationCounter +
                 '}';
+    }
+
+    public static Park getInstance(String id, String name, int maxCapacity) {
+        Park result = instance;
+        if (result == null) {
+            synchronized (Park.class) {
+                result = instance;
+                if (result == null) {
+                    instance = result = new Park(id, name, maxCapacity);
+                }
+            }
+        }
+        return result;
+    }
+
+    public static Park getInstance() {
+        Park result = instance;
+        if (result == null) {
+            throw new IllegalStateException(
+                    "The park has not been initialized. Use getInstance(id, name, maxCapacity) first."
+            );
+        }
+        return result;
     }
 
     // ----------------------------------------------------------------
