@@ -1,4 +1,4 @@
 package co.edu.uniquindio.techpark.model.enums;
-public enum AttractionType {
+public enum AttractionStatus {
     ACTIVE, UNDER_MAINTENANCE, CLOSED
 }

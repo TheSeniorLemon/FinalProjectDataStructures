@@ -1,11 +1,11 @@
 package co.edu.uniquindio.techpark.model.entities;
 
-public class Visitante {
+public class Visitor {
     private String name, id, pathImage;
     private int age;
     private double virtualBalance, height;
 
-    private Visitante(Builder builder) {
+    private Visitor(Builder builder) {
         this.name = builder.name;
         this.id = builder.id;
         this.age = builder.age;
@@ -44,8 +44,8 @@ public class Visitante {
             return this;
         }
 
-        public Visitante build() {
-            return new Visitante(this);
+        public Visitor build() {
+            return new Visitor(this);
         }
     }
 
