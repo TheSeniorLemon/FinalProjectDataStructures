@@ -1,20 +1,22 @@
 package co.edu.uniquindio.techpark.model.entities;
 
+import co.edu.uniquindio.techpark.dataStructures.SimpleLinkedList;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Zone {
     private String id, name;
     private int maxCapacity;
-    private List<Attraction> attractions;
-    private List<Operator> operators;
+    private SimpleLinkedList<Attraction> attractions;
+    private SimpleLinkedList<Operator> operators;
 
     private Zone(Builder builder) {
         this.id = builder.id;
         this.name = builder.name;
         this.maxCapacity = builder.maxCapacity;
-        this.attractions = new ArrayList<>();
-        this.operators = new ArrayList<>();
+        this.attractions = new SimpleLinkedList<>();
+        this.operators = new SimpleLinkedList<>();
     }
 
     public static class Builder {
@@ -39,6 +41,6 @@ public class Zone {
     public String getId() { return id; }
     public String getName() { return name; }
     public int getMaxCapacity() { return maxCapacity; }
-    public List<Attraction> getAttractions() { return attractions; }
-    public List<Operator> getOperators() { return operators; }
+    public SimpleLinkedList<Attraction> getAttractions() { return attractions; }
+    public SimpleLinkedList<Operator> getOperators() { return operators; }
 }
