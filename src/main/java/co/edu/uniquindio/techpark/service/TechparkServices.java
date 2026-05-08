@@ -1,7 +1,7 @@
 package co.edu.uniquindio.techpark.service;
 
-public class TechparkServices implements ITechparkServices {
+public class TechparkServices  {
 
-    @Override
+
     public void buyTicket() {}
 }

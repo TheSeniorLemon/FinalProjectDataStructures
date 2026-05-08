@@ -16,7 +16,6 @@ public class TicketService {
 
         return new Ticket.Builder(newId, type)
                 .basePrice(price)
-                .applyAdminDiscount(discount)
                 .build();
     }
 }

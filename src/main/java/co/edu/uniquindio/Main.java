@@ -1,17 +1,43 @@
 package co.edu.uniquindio;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+import co.edu.uniquindio.techpark.dataStructures.SimpleLinkedList;
+import co.edu.uniquindio.techpark.model.entities.Attraction;
+import co.edu.uniquindio.techpark.model.enums.AttractionType;
+import co.edu.uniquindio.techpark.util.VisualizadorGrafos;
+import javax.swing.JFrame;
+
 public class Main {
     public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+        // 1. Crear la lista de atracciones
+        SimpleLinkedList<Attraction> listaAtracciones = new SimpleLinkedList<>();
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
-        }
+        // 2. Crear algunas atracciones usando el Builder
+        Attraction montana = new Attraction.Builder("1", "Montaña Rusa", AttractionType.ROLLER_COASTER)
+                .build();
+        Attraction carrusel = new Attraction.Builder("2", "Carrusel", AttractionType.KIDS)
+                .build();
+        Attraction tronquitos = new Attraction.Builder("3", "Tronquitos", AttractionType.AQUATIC)
+                .build();
+
+        // 3. Crear las conexiones (Grafos)
+        // Conectamos Montaña -> Carrusel (50 metros)
+        montana.addNeighbor(carrusel, 50.0);
+        // Conectamos Carrusel -> Tronquitos (30 metros)
+        carrusel.addNeighbor(tronquitos, 30.0);
+        // Conectamos Tronquitos -> Montaña (100 metros) para cerrar el ciclo
+        tronquitos.addNeighbor(montana, 100.0);
+
+        // 4. Agregarlas a la lista
+        listaAtracciones.addLast(montana);
+        listaAtracciones.addLast(carrusel);
+        listaAtracciones.addLast(tronquitos);
+
+        // 5. Lanzar el visualizador
+        VisualizadorGrafos ventana = new VisualizadorGrafos(listaAtracciones);
+        ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        ventana.setTitle("Mapa del TechPark - Vista de Grafo");
+        ventana.setVisible(true);
+
+        System.out.println("Visualizador iniciado con " + listaAtracciones.size() + " nodos.");
     }
 }
