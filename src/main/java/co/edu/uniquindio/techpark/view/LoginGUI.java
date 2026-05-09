@@ -15,22 +15,22 @@ public class LoginGUI extends JFrame {
     // color theme
     // ----------------------------------------------------------------
     private static final Color C_BACKGROUND  = new Color(10, 14, 20);
-    private static final Color C_CARD        = new Color(18, 24, 32);
-    private static final Color C_BORDER      = new Color(40, 50, 64);
-    private static final Color C_PRIMARY     = new Color(56, 130, 255);
-    private static final Color C_PRIMARY_H   = new Color(84, 152, 255);
-    private static final Color C_TEXT        = new Color(224, 232, 244);
-    private static final Color C_TEXT2       = new Color(120, 134, 154);
-    private static final Color C_FIELD_BG    = new Color(10, 14, 20);
-    private static final Color C_ERROR       = new Color(240, 80, 80);
-    private static final Color C_SUCCESS     = new Color(52, 199, 100);
+    private static final Color C_CARD = new Color(18, 24, 32);
+    private static final Color C_BORDER = new Color(40, 50, 64);
+    private static final Color C_PRIMARY = new Color(56, 130, 255);
+    private static final Color C_PRIMARY_H = new Color(84, 152, 255);
+    private static final Color C_TEXT = new Color(224, 232, 244);
+    private static final Color C_TEXT2 = new Color(120, 134, 154);
+    private static final Color C_FIELD_BG = new Color(10, 14, 20);
+    private static final Color C_ERROR = new Color(240, 80, 80);
+    private static final Color C_SUCCESS = new Color(52, 199, 100);
 
-    private static final Font F_TITLE  = new Font("Segoe UI", Font.BOLD, 20);
-    private static final Font F_LABEL  = new Font("Segoe UI", Font.PLAIN, 12);
-    private static final Font F_FIELD  = new Font("Segoe UI", Font.PLAIN, 14);
-    private static final Font F_BTN    = new Font("Segoe UI", Font.BOLD, 14);
-    private static final Font F_LINK   = new Font("Segoe UI", Font.PLAIN, 13);
-    private static final Font F_SUB    = new Font("Segoe UI", Font.PLAIN, 13);
+    private static final Font F_TITLE = new Font("Segoe UI", Font.BOLD, 20);
+    private static final Font F_LABEL = new Font("Segoe UI", Font.PLAIN, 12);
+    private static final Font F_FIELD = new Font("Segoe UI", Font.PLAIN, 14);
+    private static final Font F_BTN = new Font("Segoe UI", Font.BOLD, 14);
+    private static final Font F_LINK = new Font("Segoe UI", Font.PLAIN, 13);
+    private static final Font F_SUB = new Font("Segoe UI", Font.PLAIN, 13);
 
     private CardLayout cardLayout;
     private JPanel cardContainer;
@@ -445,10 +445,9 @@ public class LoginGUI extends JFrame {
     }
 
     private void openMainPanel(User user) {
-        // uncomment once MainGUI is ready:
-        // MainGUI main = new MainGUI(park, user, admins);
-        // main.setVisible(true);
-        // dispose();
+        MainGUI main = new MainGUI(park, user, admins);
+        main.setVisible(true);
+        dispose();
         JOptionPane.showMessageDialog(
                 this,
                 "Welcome, " + user.getName() + "\nRole: " + user.getUserRole(),
