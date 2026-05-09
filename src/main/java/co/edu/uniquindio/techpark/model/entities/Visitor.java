@@ -15,8 +15,8 @@ public class Visitor extends User {
     private LinkedList<VisitHistory> visitHistory;
     private Set<String> favoriteIds;
 
-    public Visitor(String id, String name, String email, String password, UserRole userRole, int age, float height) {
-        super(id, name, email, password, userRole);
+    public Visitor(String id, String name, String document, String email, String password, int age, float height) {
+        super(id, name, document, email, password, UserRole.VISITOR);
         this.age = age;
         this.height = height;
         this.virtualBalance = 0.0;
@@ -87,6 +87,7 @@ public class Visitor extends User {
                 ", favoriteIds=" + favoriteIds +
                 ", id='" + id + '\'' +
                 ", name='" + name + '\'' +
+                ", document='" + document + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", userRole=" + userRole +
@@ -148,7 +149,6 @@ public class Visitor extends User {
     }
 
     public boolean meetsRestrictions(Attraction attraction) {
-        return this.age >= attraction.getMinimumAge()
-                && this.height >= attraction.getMinimumHeight();
+        return this.age >= attraction.getMinimumAge() && this.height >= attraction.getMinimumHeight();
     }
 }

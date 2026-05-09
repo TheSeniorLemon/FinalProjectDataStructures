@@ -7,13 +7,15 @@ import java.util.Objects;
 public abstract class User {
     public String id;
     public String name;
+    public String document;
     public String email;
     public String password;
     public UserRole userRole;
 
-    public User(String id, String name, String email, String password, UserRole userRole) {
+    public User(String id, String name, String document, String email, String password, UserRole userRole) {
         this.id = id;
         this.name = name;
+        this.document = document;
         this.email = email;
         this.password = password;
         this.userRole = userRole;
@@ -31,6 +33,13 @@ public abstract class User {
     }
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDocument() {
+        return document;
+    }
+    public void setDocument(String document) {
+        this.document = document;
     }
 
     public String getEmail() {
@@ -58,12 +67,12 @@ public abstract class User {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(name, user.name) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && userRole == user.userRole;
+        return Objects.equals(id, user.id) && Objects.equals(name, user.name) && Objects.equals(document, user.document) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && userRole == user.userRole;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, email, password, userRole);
+        return Objects.hash(id, name, document, email, password, userRole);
     }
 
     @Override
@@ -71,6 +80,7 @@ public abstract class User {
         return "User{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
+                ", document='" + document + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", userRole=" + userRole +

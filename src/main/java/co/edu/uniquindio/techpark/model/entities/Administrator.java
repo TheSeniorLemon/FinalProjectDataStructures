@@ -7,8 +7,8 @@ import co.edu.uniquindio.techpark.model.structures.GraphNode;
 import co.edu.uniquindio.techpark.model.structures.LinkedList;
 
 public class Administrator extends User{
-    public Administrator(String id, String name, String email, String password, UserRole userRole) {
-        super(id, name, email, password, userRole);
+    public Administrator(String id, String name, String document, String email, String password) {
+        super(id, name, document, email, password, UserRole.ADMINISTRATOR);
     }
 
     @Override
@@ -16,6 +16,7 @@ public class Administrator extends User{
         return "Administrator{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
+                ", document='" + document + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", userRole=" + userRole +

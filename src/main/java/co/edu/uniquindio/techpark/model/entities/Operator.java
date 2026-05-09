@@ -7,8 +7,8 @@ import co.edu.uniquindio.techpark.model.enums.UserRole;
 public class Operator extends User {
     private String assignedZoneId;
 
-    public Operator(String id, String name, String email, String password, UserRole userRole) {
-        super(id, name, email, password, userRole);
+    public Operator(String id, String name, String document, String email, String password) {
+        super(id, name, document, email, password, UserRole.OPERATOR);
         this.assignedZoneId = null;
     }
 
@@ -25,6 +25,7 @@ public class Operator extends User {
                 "assignedZoneId='" + assignedZoneId + '\'' +
                 ", id='" + id + '\'' +
                 ", name='" + name + '\'' +
+                ", document='" + document + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", userRole=" + userRole +
@@ -49,8 +50,7 @@ public class Operator extends User {
             System.out.println("The visitor does not meet the safety restrictions.");
             return false;
         }
-        if (attraction.getAdditionalCost() > 0
-                && visitor.getTicket().getType() == TicketType.GENERAL) {
+        if (attraction.getAdditionalCost() > 0 && visitor.getTicket().getType() == TicketType.GENERAL) {
             if (!visitor.hasSufficientBalance(attraction.getAdditionalCost())) {
                 System.out.println("Insufficient balance for this attraction.");
                 return false;
@@ -60,9 +60,7 @@ public class Operator extends User {
         return true;
     }
 
-    public boolean changeAttractionStatus(Attraction attraction,
-                                          AttractionStatus newStatus,
-                                          String reason) {
+    public boolean changeAttractionStatus(Attraction attraction, AttractionStatus newStatus, String reason) {
         if (!isInMyZone(attraction)) {
             System.out.println("Access denied: attraction outside the assigned zone.");
             return false;
@@ -79,8 +77,7 @@ public class Operator extends User {
             return false;
         }
         attraction.addInspection(inspection);
-        if (inspection.isSuccessful()
-                && attraction.getStatus() == AttractionStatus.MAINTENANCE) {
+        if (inspection.isSuccessful() && attraction.getStatus() == AttractionStatus.MAINTENANCE) {
             attraction.changeStatus(AttractionStatus.ACTIVE, null);
             System.out.println("Successful inspection. Attraction " +
                     attraction.getName() + " reactivated.");
