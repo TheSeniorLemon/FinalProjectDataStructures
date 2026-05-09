@@ -1,5 +1,7 @@
 package co.edu.uniquindio.techpark.model.structures;
 
+import co.edu.uniquindio.techpark.model.entities.Attraction;
+
 public class GraphEdge<T extends Comparable<T>> {
     private GraphNode<T> destination;
     private double weight;
@@ -35,7 +37,7 @@ public class GraphEdge<T extends Comparable<T>> {
     @Override
     public String toString() {
         return "GraphEdge{" +
-                "destination=" + destination +
+                "destination=" + (destination != null ? ((Attraction) destination.getData()).getName() : "null") +
                 ", weight=" + weight +
                 ", description='" + description + '\'' +
                 '}';

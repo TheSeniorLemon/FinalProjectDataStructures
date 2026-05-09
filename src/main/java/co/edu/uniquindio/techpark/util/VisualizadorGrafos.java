@@ -1,12 +1,13 @@
 package co.edu.uniquindio.techpark.util;
+
 import co.edu.uniquindio.techpark.dataStructures.SimpleLinkedList;
 import co.edu.uniquindio.techpark.model.entities.Attraction;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
 import java.util.HashMap;
 import javax.swing.JFrame;
-public class VisualizadorGrafos extends JFrame {
 
+public class VisualizadorGrafos extends JFrame {
     public VisualizadorGrafos(SimpleLinkedList<Attraction> listaAtracciones) {
         mxGraph graph = new mxGraph();
         Object parent = graph.getDefaultParent();

@@ -5,7 +5,6 @@ import java.util.Random;
 import java.util.Set;
 
 public class CodeGenerator {
-
     public CodeGenerator() {}
 
     private static final String HEXADECIMAL = "0123456789ABCDEF";

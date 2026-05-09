@@ -25,7 +25,7 @@ public final class Park {
     private int notificationCounter;
     private static volatile Park instance;
 
-    private Park(String id, String name, int maxCapacity) {
+    Park(String id, String name, int maxCapacity) {
         this.id = id;
         this.name = name;
         this.maxCapacity = maxCapacity;

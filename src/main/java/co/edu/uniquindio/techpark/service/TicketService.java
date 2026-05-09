@@ -11,12 +11,12 @@ public class TicketService {
         this.codeGenerator = new CodeGenerator();
     }
 
-    public Ticket createTicket(TicketType type, double price, double discount) throws Exception {
-        String newId = codeGenerator.generateDecimalCodeStr(8);
-
-        return new Ticket.Builder(newId, type)
-                .basePrice(price)
-                .applyAdminDiscount(discount)
-                .build();
-    }
+//    public Ticket createTicket(TicketType type, double price, double discount) throws Exception {
+//        String newId = codeGenerator.generateDecimalCodeStr(8);
+//
+//        return new Ticket.Builder(newId, type)
+//                .basePrice(price)
+//                .applyAdminDiscount(discount)
+//                .build();
+//    }
 }

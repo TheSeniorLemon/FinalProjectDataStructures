@@ -83,7 +83,7 @@ public class Visitor extends User {
                 ", virtualBalance=" + virtualBalance +
                 ", profilePhoto='" + profilePhoto + '\'' +
                 ", ticket=" + (ticket != null ? ticket.getType() : "none") +
-                ", visitHistory=" + visitHistory +
+                ", visitHistory=LinkedList[size=" + visitHistory.getSize() + "]" +
                 ", favoriteIds=" + favoriteIds +
                 ", id='" + id + '\'' +
                 ", name='" + name + '\'' +

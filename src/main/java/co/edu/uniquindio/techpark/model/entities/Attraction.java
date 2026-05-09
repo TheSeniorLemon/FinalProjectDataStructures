@@ -25,7 +25,7 @@ public class Attraction implements Comparable<Attraction> {
 
     private static final int MAINTENANCE_LIMIT = 500;
 
-    public Attraction(String id, String zoneId, String name, AttractionType type, int capacityPerCycle, float minimumHeight, int minimumAge, double additionalCost, int visitorCount, int estimatedWaitTime, AttractionStatus status, String closureReason, PriorityQueue<Visitor> virtualQueue, LinkedList<TechnicalInspection> inspections) {
+    public Attraction(String id, String name, AttractionType type, int capacityPerCycle, float minimumHeight, int minimumAge, double additionalCost, int estimatedWaitTime) {
         this.id = id;
         this.zoneId = null;
         this.name = name;
@@ -167,7 +167,7 @@ public class Attraction implements Comparable<Attraction> {
                 ", estimatedWaitTime=" + estimatedWaitTime + " min" +
                 ", status=" + status +
                 ", closureReason='" + closureReason + '\'' +
-                ", virtualQueue=" + virtualQueue +
+                ", virtualQueue=PriorityQueue[size=" + virtualQueue.getSize() + "]" +
                 ", inspections=" + inspections +
                 ", inQueue=" + virtualQueue.getSize() +
                 '}';

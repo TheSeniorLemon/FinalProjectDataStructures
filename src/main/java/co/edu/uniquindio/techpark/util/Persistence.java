@@ -3,7 +3,6 @@ package co.edu.uniquindio.techpark.util;
 import java.io.*;
 
 public class Persistence {
-
     /**
      * Metodo que permite serializar un objeto en un archivo en la ruta especificada
      * @param object Object a serializar

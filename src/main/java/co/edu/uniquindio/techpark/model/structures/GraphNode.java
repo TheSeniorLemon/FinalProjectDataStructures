@@ -1,5 +1,7 @@
 package co.edu.uniquindio.techpark.model.structures;
 
+import co.edu.uniquindio.techpark.model.entities.Attraction;
+
 public class GraphNode<T extends Comparable<T>> {
     private T data;
     private LinkedList<GraphEdge<T>> edges;
@@ -53,11 +55,11 @@ public class GraphNode<T extends Comparable<T>> {
     @Override
     public String toString() {
         return "GraphNode{" +
-                "data=" + data +
-                ", edges=" + edges +
+                "data=" + (data != null ? ((Attraction) data).getName() : "null") +
+                ", edges=LinkedList[size=" + edges.getSize() + "]" +
                 ", visited=" + visited +
                 ", distance=" + (distance == Double.MAX_VALUE ? "INF" : distance) +
-                ", previous=" + previous +
+                ", previous=" + (previous != null ? ((Attraction) previous.getData()).getName() : "null") +
                 '}';
     }
 

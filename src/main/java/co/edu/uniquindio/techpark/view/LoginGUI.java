@@ -293,7 +293,7 @@ public class LoginGUI extends JFrame {
                         return;
                     }
                     try {
-                        int   age    = Integer.parseInt(ageStr);
+                        int age = Integer.parseInt(ageStr);
                         float height = Float.parseFloat(heightStr);
                         if (age <= 0 || height <= 0) throw new NumberFormatException();
                         Visitor visitor = new Visitor(id, name, document, email, password, age, height);
