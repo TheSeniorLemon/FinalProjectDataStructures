@@ -103,7 +103,30 @@ public class Operator extends User {
         return assignedZoneId.equals(attraction.getZoneId());
     }
 
+    // ----------------------------------------------------------------
+    // zone assignment
+    // ----------------------------------------------------------------
+
+    public boolean hasAssignedZone(Park park) {
+        if (assignedZoneId == null || assignedZoneId.isBlank()) return false;
+        return park.findZone(assignedZoneId) != null;
+    }
+
     public boolean hasAssignedZone() {
-        return assignedZoneId != null;
+        return assignedZoneId != null && !assignedZoneId.isBlank();
+    }
+
+    public void assignToZone(Zone zone) {
+        if (zone == null) throw new IllegalArgumentException("Zone cannot be null.");
+        this.assignedZoneId = zone.getId();
+    }
+
+    public void unassign() {
+        this.assignedZoneId = null;
+    }
+
+    public Zone resolveZone(Park park) {
+        if (!hasAssignedZone()) return null;
+        return park.findZone(assignedZoneId);
     }
 }
