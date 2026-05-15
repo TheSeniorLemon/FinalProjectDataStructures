@@ -2,6 +2,7 @@ package co.edu.uniquindio.techpark.model.entities;
 
 import co.edu.uniquindio.techpark.model.entities.*;
 import co.edu.uniquindio.techpark.model.enums.*;
+import co.edu.uniquindio.techpark.service.EmailService;
 import co.edu.uniquindio.techpark.view.LoginGUI;
 
 import javax.swing.*;
@@ -235,11 +236,11 @@ public class Main {
         // favorites and history for alice
         visitors[0].addFavorite("ATT-001");
         visitors[0].addFavorite("ATT-010");
-        visitors[0].registerVisit(new VisitHistory("ATT-004","Titan Water Slide", today()+"T10:15", 10000.0, TicketType.FAST_PASS));
-        visitors[0].registerVisit(new VisitHistory("ATT-010","VR Escape Room", today()+"T11:30", 20000.0, TicketType.FAST_PASS));
+        visitors[0].registerVisit(new VisitHistory("ATT-004","Titan Water Slide", today()+"T10:15", 10000.0, TicketType.FAST_PASS, 1));
+        visitors[0].registerVisit(new VisitHistory("ATT-010","VR Escape Room", today()+"T11:30", 20000.0, TicketType.FAST_PASS, 1));
 
         // bob's history
-        visitors[1].registerVisit(new VisitHistory("ATT-001","Extreme Roller Coaster", today()+"T09:45", 15000.0, TicketType.GENERAL));
+        visitors[1].registerVisit(new VisitHistory("ATT-001","Extreme Roller Coaster", today()+"T09:45", 15000.0, TicketType.GENERAL, 1));
 
         // register entries in daily report
         Report report = park.getDailyReport();

@@ -11,6 +11,7 @@ import java.awt.geom.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class LoginGUI extends JFrame {
+
     private static final Color C_BG = new Color(10, 14, 20);
     private static final Color C_CARD = new Color(18, 24, 32);
     private static final Color C_BORDER = new Color(40, 50, 64);
