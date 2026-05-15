@@ -1,9 +1,6 @@
 package co.edu.uniquindio.techpark.view;
 
-import co.edu.uniquindio.techpark.model.entities.Operator;
-import co.edu.uniquindio.techpark.model.entities.Park;
-import co.edu.uniquindio.techpark.model.entities.UserStore;
-import co.edu.uniquindio.techpark.model.entities.Zone;
+import co.edu.uniquindio.techpark.model.entities.*;
 import co.edu.uniquindio.techpark.model.structures.LinkedList;
 
 import javax.swing.*;

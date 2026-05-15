@@ -15,7 +15,6 @@ import java.awt.event.*;
 import java.awt.geom.*;
 
 public class MainGUI extends JFrame {
-
     // ----------------------------------------------------------------
     // color theme
     // ----------------------------------------------------------------

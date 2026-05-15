@@ -1,20 +1,17 @@
 package co.edu.uniquindio.techpark.view;
 
 import co.edu.uniquindio.techpark.model.entities.*;
-import co.edu.uniquindio.techpark.model.structures.LinkedList;
+import co.edu.uniquindio.techpark.service.EmailService;
 
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class LoginGUI extends JFrame {
-
-    // ----------------------------------------------------------------
-    // color theme
-    // ----------------------------------------------------------------
-    private static final Color C_BACKGROUND  = new Color(10, 14, 20);
+    private static final Color C_BG = new Color(10, 14, 20);
     private static final Color C_CARD = new Color(18, 24, 32);
     private static final Color C_BORDER = new Color(40, 50, 64);
     private static final Color C_PRIMARY = new Color(56, 130, 255);
@@ -35,11 +32,9 @@ public class LoginGUI extends JFrame {
     private CardLayout cardLayout;
     private JPanel cardContainer;
     private final Park park;
-    private LinkedList<Administrator> admins;
 
     public LoginGUI(Park park) {
         this.park = park;
-        this.admins = new LinkedList<>();
         setupWindow();
         buildUI();
         setVisible(true);
@@ -54,37 +49,33 @@ public class LoginGUI extends JFrame {
         setSize(460, 580);
         setLocationRelativeTo(null);
         setResizable(false);
-        getContentPane().setBackground(C_BACKGROUND);
     }
 
     private void buildUI() {
         cardLayout    = new CardLayout();
         cardContainer = new JPanel(cardLayout);
         cardContainer.setOpaque(false);
-
         cardContainer.add(buildLoginPanel(), "LOGIN");
         cardContainer.add(buildRegisterPanel(), "REGISTER");
         cardContainer.add(buildForgotPanel(), "FORGOT");
 
-        JPanel background = new JPanel(new GridBagLayout()) {
+        JPanel bg = new JPanel(new GridBagLayout()) {
             @Override protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setColor(C_BACKGROUND);
-                g2.fillRect(0, 0, getWidth(), getHeight());
-                g2.dispose();
+                g.setColor(C_BG);
+                g.fillRect(0, 0, getWidth(), getHeight());
             }
         };
-        background.setOpaque(false);
-        background.add(cardContainer);
-        setContentPane(background);
+        bg.setOpaque(false);
+        bg.add(cardContainer);
+        setContentPane(bg);
     }
 
     // ================================================================
-    // LOGIN PANEL
+    // LOGIN
     // ================================================================
     private JPanel buildLoginPanel() {
-        JPanel card = createCard(400, 490);
+        JPanel card = card(400, 490);
         card.setLayout(new GridBagLayout());
         GridBagConstraints g = gbc();
 
@@ -106,573 +97,476 @@ public class LoginGUI extends JFrame {
         // password
         g.gridy = 4; g.insets = ins(0, 36, 4, 36);
         card.add(label("Password"), g);
-
-        JPasswordField passField = passwordField();
+        JPasswordField passField = passField();
         g.gridy = 5; g.insets = ins(0, 36, 8, 36);
         card.add(passField, g);
 
-        // forgot password link
-        JButton btnForgot = linkButton("Forgot my password");
+        JButton btnForgot = linkBtn("Forgot my password");
         g.gridy = 6; g.insets = ins(0, 36, 18, 36);
-        card.add(wrap(btnForgot, FlowLayout.RIGHT), g);
+        card.add(wrapBtn(btnForgot, FlowLayout.RIGHT), g);
 
-        // error label
-        JLabel errorLabel = errorLabel();
+        JLabel errLabel = errLabel();
         g.gridy = 7; g.insets = ins(0, 36, 8, 36);
-        card.add(errorLabel, g);
+        card.add(errLabel, g);
 
-        // sign in button
-        JButton btnSignIn = primaryButton("Sign in");
+        JButton btnSignIn = primaryBtn("Sign in");
         g.gridy = 8; g.insets = ins(0, 36, 20, 36);
         card.add(btnSignIn, g);
 
-        // separator
         g.gridy = 9; g.insets = ins(0, 36, 16, 36);
-        card.add(separator(), g);
+        card.add(sep(), g);
 
-        // register link
-        JPanel registerRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 4, 0));
-        registerRow.setOpaque(false);
-        JLabel noAccount = new JLabel("Don't have an account?");
-        noAccount.setFont(F_LINK); noAccount.setForeground(C_TEXT2);
-        JButton btnGoRegister = linkButton("Sign up");
-        registerRow.add(noAccount); registerRow.add(btnGoRegister);
+        JPanel row = new JPanel(new FlowLayout(FlowLayout.CENTER, 4, 0));
+        row.setOpaque(false);
+        JLabel noAcc = new JLabel("Don't have an account?");
+        noAcc.setFont(F_LINK); noAcc.setForeground(C_TEXT2);
+        JButton btnReg = linkBtn("Sign up");
+        row.add(noAcc); row.add(btnReg);
         g.gridy = 10; g.insets = ins(0, 36, 28, 36);
-        card.add(registerRow, g);
+        card.add(row, g);
 
-        // actions
         btnSignIn.addActionListener(e -> {
             String email = emailField.getText().trim();
-            String password = new String(passField.getPassword()).trim();
-            if (email.isEmpty() || password.isEmpty()) {
-                showError(errorLabel, "Please fill in all fields.");
-                return;
+            String pass  = new String(passField.getPassword()).trim();
+            if (email.isEmpty() || pass.isEmpty()) {
+                err(errLabel, "Please fill in all fields."); return;
             }
-            User user = authenticate(email, password);
+            User user = UserStore.getInstance().authenticate(email, pass);
             if (user == null) {
-                showError(errorLabel, "Incorrect email or password.");
-                return;
+                err(errLabel, "Incorrect email or password."); return;
             }
-            errorLabel.setText("");
-            openMainPanel(user);
+            errLabel.setText("");
+            openMain(user);
         });
 
-        btnForgot.addActionListener(e     -> cardLayout.show(cardContainer, "FORGOT"));
-        btnGoRegister.addActionListener(e -> cardLayout.show(cardContainer, "REGISTER"));
-
+        btnForgot.addActionListener(e -> cardLayout.show(cardContainer, "FORGOT"));
+        btnReg.addActionListener(e -> cardLayout.show(cardContainer, "REGISTER"));
         return card;
     }
 
     // ================================================================
-    // REGISTER PANEL
+    // REGISTER
     // ================================================================
     private JPanel buildRegisterPanel() {
-        JPanel card = createCard(400, 620);
+        JPanel card = card(400, 640);
         card.setLayout(new GridBagLayout());
         GridBagConstraints g = gbc();
 
         g.gridy = 0; g.insets = ins(28, 36, 20, 36);
         card.add(centeredLabel("Create account", F_TITLE, C_TEXT), g);
 
-        // full name
-        g.gridy = 1; g.insets = ins(0, 36, 4, 36);
-        card.add(label("Full name"), g);
+        g.gridy = 1; g.insets = ins(0, 36, 4, 36); card.add(label("Full name"), g);
         JTextField nameField = textField("John Doe");
-        g.gridy = 2; g.insets = ins(0, 36, 10, 36);
-        card.add(nameField, g);
+        g.gridy = 2; g.insets = ins(0, 36, 10, 36); card.add(nameField, g);
 
-        // document number
-        g.gridy = 3; g.insets = ins(0, 36, 4, 36);
-        card.add(label("Document number"), g);
-        JTextField docField = textField("1234567890");
-        g.gridy = 4; g.insets = ins(0, 36, 10, 36);
-        card.add(docField, g);
+        g.gridy = 3; g.insets = ins(0, 36, 4, 36); card.add(label("Document number"), g);
+        JTextField docField  = textField("1234567890");
+        g.gridy = 4; g.insets = ins(0, 36, 10, 36); card.add(docField, g);
 
-        // email
-        g.gridy = 5; g.insets = ins(0, 36, 4, 36);
-        card.add(label("Email address"), g);
+        g.gridy = 5; g.insets = ins(0, 36, 4, 36); card.add(label("Email address"), g);
         JTextField emailField = textField("you@example.com");
-        g.gridy = 6; g.insets = ins(0, 36, 10, 36);
-        card.add(emailField, g);
+        g.gridy = 6; g.insets = ins(0, 36, 10, 36); card.add(emailField, g);
 
-        // password
-        g.gridy = 7; g.insets = ins(0, 36, 4, 36);
-        card.add(label("Password"), g);
-        JPasswordField passField = passwordField();
-        g.gridy = 8; g.insets = ins(0, 36, 10, 36);
-        card.add(passField, g);
+        g.gridy = 7; g.insets = ins(0, 36, 4, 36); card.add(label("Password"), g);
+        JPasswordField passField = passField();
+        g.gridy = 8; g.insets = ins(0, 36, 10, 36); card.add(passField, g);
 
-        // user role
-        g.gridy = 9; g.insets = ins(0, 36, 4, 36);
-        card.add(label("User role"), g);
-        JComboBox<String> roleCombo = new JComboBox<>(
-                new String[]{"VISITOR", "OPERATOR", "ADMIN"}
-        );
+        g.gridy = 9; g.insets = ins(0, 36, 4, 36); card.add(label("User role"), g);
+        JComboBox<String> roleCombo = new JComboBox<>(new String[]{"VISITOR","OPERATOR","ADMIN"});
         styleCombo(roleCombo);
-        g.gridy = 10; g.insets = ins(0, 36, 10, 36);
-        card.add(roleCombo, g);
+        g.gridy = 10; g.insets = ins(0, 36, 10, 36); card.add(roleCombo, g);
 
-        // visitor-only fields (age + height)
+        // visitor-only fields
         JPanel visitorFields = new JPanel(new GridLayout(1, 2, 12, 0));
         visitorFields.setOpaque(false);
+        JPanel ageCol = col("Age", "18");
+        JPanel htCol  = col("Height (cm)", "170");
+        JTextField ageField    = (JTextField) ((BorderLayout) ageCol.getLayout() == null
+                ? null : ageCol.getComponent(1));
+        JTextField heightField = (JTextField) ((BorderLayout) htCol.getLayout() == null
+                ? null : htCol.getComponent(1));
 
-        JPanel ageCol = new JPanel(new BorderLayout(0, 4));
-        ageCol.setOpaque(false);
-        ageCol.add(label("Age"), BorderLayout.NORTH);
-        JTextField ageField = textField("18");
-        ageCol.add(ageField, BorderLayout.CENTER);
+        // rebuild cols properly
+        visitorFields.removeAll();
+        JPanel agePanel = new JPanel(new BorderLayout(0, 4)); agePanel.setOpaque(false);
+        agePanel.add(label("Age"), BorderLayout.NORTH);
+        JTextField ageTF = textField("18"); agePanel.add(ageTF, BorderLayout.CENTER);
 
-        JPanel heightCol = new JPanel(new BorderLayout(0, 4));
-        heightCol.setOpaque(false);
-        heightCol.add(label("Height (cm)"), BorderLayout.NORTH);
-        JTextField heightField = textField("170");
-        heightCol.add(heightField, BorderLayout.CENTER);
+        JPanel htPanel = new JPanel(new BorderLayout(0, 4)); htPanel.setOpaque(false);
+        htPanel.add(label("Height (cm)"), BorderLayout.NORTH);
+        JTextField htTF = textField("170"); htPanel.add(htTF, BorderLayout.CENTER);
 
-        visitorFields.add(ageCol);
-        visitorFields.add(heightCol);
+        visitorFields.add(agePanel); visitorFields.add(htPanel);
+        g.gridy = 11; g.insets = ins(0, 36, 10, 36); card.add(visitorFields, g);
 
-        g.gridy = 11; g.insets = ins(0, 36, 10, 36);
-        card.add(visitorFields, g);
+        JLabel errLabel = errLabel();
+        g.gridy = 12; g.insets = ins(0, 36, 8, 36); card.add(errLabel, g);
 
-        // error label
-        JLabel errorLabel = errorLabel();
-        g.gridy = 12; g.insets = ins(0, 36, 8, 36);
-        card.add(errorLabel, g);
+        JButton btnCreate = primaryBtn("Create account");
+        g.gridy = 13; g.insets = ins(0, 36, 14, 36); card.add(btnCreate, g);
 
-        // create account button
-        JButton btnCreate = primaryButton("Create account");
-        g.gridy = 13; g.insets = ins(0, 36, 14, 36);
-        card.add(btnCreate, g);
+        JPanel backRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 4, 0));
+        backRow.setOpaque(false);
+        JLabel hasAcc = new JLabel("Already have an account?");
+        hasAcc.setFont(F_LINK); hasAcc.setForeground(C_TEXT2);
+        JButton btnBack = linkBtn("Sign in");
+        backRow.add(hasAcc); backRow.add(btnBack);
+        g.gridy = 14; g.insets = ins(0, 36, 24, 36); card.add(backRow, g);
 
-        // back to login link
-        JPanel loginRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 4, 0));
-        loginRow.setOpaque(false);
-        JLabel hasAccount = new JLabel("Already have an account?");
-        hasAccount.setFont(F_LINK); hasAccount.setForeground(C_TEXT2);
-        JButton btnBack = linkButton("Sign in");
-        loginRow.add(hasAccount); loginRow.add(btnBack);
-        g.gridy = 14; g.insets = ins(0, 36, 24, 36);
-        card.add(loginRow, g);
-
-        // show or hide visitor fields based on role
         roleCombo.addActionListener(e -> {
-            visitorFields.setVisible(roleCombo.getSelectedItem().equals("VISITOR"));
-            card.revalidate();
-            card.repaint();
+            visitorFields.setVisible("VISITOR".equals(roleCombo.getSelectedItem()));
+            card.revalidate(); card.repaint();
         });
 
         btnCreate.addActionListener(e -> {
-            String name = nameField.getText().trim();
-            String document = docField.getText().trim();
-            String email = emailField.getText().trim();
-            String password = new String(passField.getPassword()).trim();
-            String role = (String) roleCombo.getSelectedItem();
+            // read all values inside lambda - avoids any capture issue
+            final String name = nameField.getText().trim();
+            final String document = docField.getText().trim();
+            final String email = emailField.getText().trim();
+            final String password = new String(passField.getPassword()).trim();
+            final String role = (String) roleCombo.getSelectedItem();
 
             if (name.isEmpty() || document.isEmpty() || email.isEmpty() || password.isEmpty()) {
-                showError(errorLabel, "Please fill in all required fields.");
-                return;
+                err(errLabel, "Please fill in all required fields."); return;
             }
-            if (!email.contains("@") || !email.contains(".")) {
-                showError(errorLabel, "Please enter a valid email address.");
-                return;
+            // FIX: robust email check that does not rely on placeholder text
+            if (!validEmail(email)) {
+                err(errLabel, "Please enter a valid email address."); return;
             }
             if (password.length() < 6) {
-                showError(errorLabel, "Password must be at least 6 characters.");
-                return;
+                err(errLabel, "Password must be at least 6 characters."); return;
             }
 
-            String id  = "USR-" + System.currentTimeMillis();
-            boolean ok = false;
+            UserStore store = UserStore.getInstance();
+
+            // duplicate checks
+            if (store.emailExists(email)) {
+                err(errLabel, "Email address is already registered."); return;
+            }
+            if (store.documentExists(document)) {
+                err(errLabel, "Document number is already registered."); return;
+            }
+
+            final String id = "USR-" + System.currentTimeMillis();
+            User newUser;
 
             switch (role) {
-                case "VISITOR": {
-                    String ageStr = ageField.getText().trim();
-                    String heightStr = heightField.getText().trim();
-                    if (ageStr.isEmpty() || heightStr.isEmpty()) {
-                        showError(errorLabel, "Please enter age and height.");
-                        return;
+                case "VISITOR" -> {
+                    final String ageStr = ageTF.getText().trim();
+                    final String htStr  = htTF.getText().trim();
+                    if (ageStr.isEmpty() || htStr.isEmpty()) {
+                        err(errLabel, "Please enter age and height."); return;
                     }
+                    int   age;
+                    float height;
                     try {
-                        int age = Integer.parseInt(ageStr);
-                        float height = Float.parseFloat(heightStr);
+                        age    = Integer.parseInt(ageStr);
+                        height = Float.parseFloat(htStr);
                         if (age <= 0 || height <= 0) throw new NumberFormatException();
-                        Visitor visitor = new Visitor(id, name, document, email, password, age, height);
-                        park.registerVisitor(visitor);
-                        ok = true;
                     } catch (NumberFormatException ex) {
-                        showError(errorLabel, "Age and height must be valid numbers.");
-                        return;
+                        err(errLabel, "Age and height must be valid positive numbers."); return;
                     }
-                    break;
+                    // KEY FIX: do NOT call park.registerVisitor() here.
+                    // Visitors are stored in UserStore only.
+                    // Park registration happens when they buy a ticket and enter.
+                    newUser = new Visitor(id, name, document, email, password, age, height);
                 }
-                case "OPERATOR": {
-                    Operator operator = new Operator(id, name, document, email, password);
-                    park.registerOperator(operator);
-                    ok = true;
-                    break;
-                }
-                case "ADMIN": {
-                    Administrator admin = new Administrator(id, name, document, email, password);
-                    admins.add(admin);
-                    ok = true;
-                    break;
-                }
+                case "OPERATOR" -> newUser = new Operator(id, name, document, email, password);
+                default -> newUser = new Administrator(id, name, document, email, password);
             }
 
-            if (ok) {
-                errorLabel.setForeground(C_SUCCESS);
-                errorLabel.setText("Account created. Please sign in.");
-                clearFields(nameField, docField, emailField, ageField, heightField);
-                passField.setText("");
-                Timer t = new Timer(1800, ev -> {
-                    cardLayout.show(cardContainer, "LOGIN");
-                    errorLabel.setText("");
-                });
-                t.setRepeats(false);
-                t.start();
+            if (!store.register(newUser)) {
+                err(errLabel, "Registration failed. Please try again."); return;
             }
+
+            // welcome email (non-blocking)
+            final User registered = newUser;
+            new Thread(() -> EmailService.getInstance()
+                    .sendWelcomeEmail(registered.getEmail(), registered.getName())
+            ).start();
+
+            errLabel.setForeground(C_SUCCESS);
+            errLabel.setText("Account created! Sign in to continue.");
+            clearFields(nameField, docField, emailField, ageTF, htTF);
+            passField.setText("");
+            roleCombo.setSelectedIndex(0);
+
+            Timer t = new Timer(1800, ev -> {
+                cardLayout.show(cardContainer, "LOGIN");
+                errLabel.setText("");
+            });
+            t.setRepeats(false); t.start();
         });
 
         btnBack.addActionListener(e -> cardLayout.show(cardContainer, "LOGIN"));
-
         return card;
     }
 
     // ================================================================
-    // FORGOT PASSWORD PANEL
+    // FORGOT PASSWORD - real email verification
     // ================================================================
     private JPanel buildForgotPanel() {
-        JPanel card = createCard(400, 360);
+        JPanel card = card(400, 380);
         card.setLayout(new GridBagLayout());
         GridBagConstraints g = gbc();
 
         g.gridy = 0; g.insets = ins(36, 36, 8, 36);
         card.add(centeredLabel("Reset password", F_TITLE, C_TEXT), g);
 
-        JLabel description = new JLabel(
-                "<html><div style='text-align:center;'>Enter your email and we will send you<br>" +
-                        "a link to reset your password.</div></html>",
-                SwingConstants.CENTER
-        );
-        description.setFont(F_SUB); description.setForeground(C_TEXT2);
-        g.gridy = 1; g.insets = ins(0, 36, 24, 36);
-        card.add(description, g);
+        JLabel desc = new JLabel(
+                "<html><div style='text-align:center;'>Enter your email and we will send<br>" +
+                        "you a 6-digit verification code.</div></html>", SwingConstants.CENTER);
+        desc.setFont(F_SUB); desc.setForeground(C_TEXT2);
+        g.gridy = 1; g.insets = ins(0, 36, 22, 36); card.add(desc, g);
 
-        g.gridy = 2; g.insets = ins(0, 36, 4, 36);
-        card.add(label("Email address"), g);
-
+        g.gridy = 2; g.insets = ins(0, 36, 4, 36);  card.add(label("Email address"), g);
         JTextField emailField = textField("you@example.com");
-        g.gridy = 3; g.insets = ins(0, 36, 10, 36);
-        card.add(emailField, g);
+        g.gridy = 3; g.insets = ins(0, 36, 10, 36); card.add(emailField, g);
 
-        JLabel msgLabel = errorLabel();
-        g.gridy = 4; g.insets = ins(0, 36, 10, 36);
-        card.add(msgLabel, g);
+        JLabel msgLabel = errLabel();
+        g.gridy = 4; g.insets = ins(0, 36, 10, 36); card.add(msgLabel, g);
 
-        JButton btnSend = primaryButton("Send reset link");
-        g.gridy = 5; g.insets = ins(0, 36, 16, 36);
-        card.add(btnSend, g);
+        JButton btnSend = primaryBtn("Send verification code");
+        g.gridy = 5; g.insets = ins(0, 36, 14, 36); card.add(btnSend, g);
 
-        JButton btnBack = linkButton("Back to sign in");
+        JButton btnBack = linkBtn("Back to sign in");
         g.gridy = 6; g.insets = ins(0, 36, 28, 36);
-        card.add(wrap(btnBack, FlowLayout.CENTER), g);
+        card.add(wrapBtn(btnBack, FlowLayout.CENTER), g);
+
+        AtomicReference<String> pendingCode = new AtomicReference<>(null);
 
         btnSend.addActionListener(e -> {
-            String email = emailField.getText().trim();
-            if (email.isEmpty() || !email.contains("@")) {
-                showError(msgLabel, "Please enter a valid email address.");
+            final String email = emailField.getText().trim();
+
+            if (!validEmail(email)) {
+                err(msgLabel, "Please enter a valid email address."); return;
+            }
+            if (UserStore.getInstance().findByEmail(email) == null) {
+                err(msgLabel, "No account found with that email address."); return;
+            }
+
+            String code = EmailService.getInstance().generateCode();
+            pendingCode.set(code);
+
+            if (!EmailService.getInstance().isConfigured()) {
+                // dev mode: show code in console and dialog
+                System.out.println("[DEV] Reset code for " + email + ": " + code);
+                showCodeDialog(email, code, msgLabel);
                 return;
             }
-            if (findByEmail(email) == null) {
-                showError(msgLabel, "No account found with that email address.");
-                return;
-            }
-            msgLabel.setForeground(C_SUCCESS);
-            msgLabel.setText("Reset link sent. Check your inbox.");
+
             btnSend.setEnabled(false);
-            Timer t = new Timer(2500, ev -> {
-                cardLayout.show(cardContainer, "LOGIN");
-                emailField.setText("");
-                msgLabel.setText("");
-                btnSend.setEnabled(true);
-            });
-            t.setRepeats(false);
-            t.start();
+            msgLabel.setForeground(C_TEXT2);
+            msgLabel.setText("Sending code...");
+
+            new Thread(() -> {
+                boolean sent = EmailService.getInstance().sendVerificationCode(email, code);
+                SwingUtilities.invokeLater(() -> {
+                    btnSend.setEnabled(true);
+                    if (sent) {
+                        msgLabel.setForeground(C_SUCCESS);
+                        msgLabel.setText("Code sent! Check your inbox.");
+                        Timer t = new Timer(600, ev -> showCodeDialog(email, pendingCode.get(), msgLabel));
+                        t.setRepeats(false); t.start();
+                    } else {
+                        err(msgLabel, "Could not send email. Check EmailService configuration.");
+                    }
+                });
+            }).start();
         });
 
-        btnBack.addActionListener(e -> cardLayout.show(cardContainer, "LOGIN"));
+        btnBack.addActionListener(e -> {
+            pendingCode.set(null);
+            emailField.setText("");
+            msgLabel.setText("");
+            cardLayout.show(cardContainer, "LOGIN");
+        });
 
         return card;
     }
 
-    // ================================================================
-    // authentication logic
-    // ================================================================
-    private User authenticate(String email, String password) {
-        LinkedList<Visitor> visitors = park.getRegisteredVisitors();
-        for (int i = 0; i < visitors.getSize(); i++) {
-            Visitor v = visitors.get(i);
-            if (v != null && v.login(email, password)) return v;
-        }
-        LinkedList<Operator> operators = park.getOperators();
-        for (int i = 0; i < operators.getSize(); i++) {
-            Operator op = operators.get(i);
-            if (op != null && op.login(email, password)) return op;
-        }
-        for (int i = 0; i < admins.getSize(); i++) {
-            Administrator adm = admins.get(i);
-            if (adm != null && adm.login(email, password)) return adm;
-        }
-        return null;
-    }
-
-    private User findByEmail(String email) {
-        LinkedList<Visitor> visitors = park.getRegisteredVisitors();
-        for (int i = 0; i < visitors.getSize(); i++) {
-            Visitor v = visitors.get(i);
-            if (v != null && v.getEmail().equalsIgnoreCase(email)) return v;
-        }
-        LinkedList<Operator> operators = park.getOperators();
-        for (int i = 0; i < operators.getSize(); i++) {
-            Operator op = operators.get(i);
-            if (op != null && op.getEmail().equalsIgnoreCase(email)) return op;
-        }
-        for (int i = 0; i < admins.getSize(); i++) {
-            Administrator adm = admins.get(i);
-            if (adm != null && adm.getEmail().equalsIgnoreCase(email)) return adm;
-        }
-        return null;
-    }
-
-    private void openMainPanel(User user) {
-        MainGUI main = new MainGUI(park, user, admins);
-        main.setVisible(true);
-        dispose();
-        JOptionPane.showMessageDialog(
+    private void showCodeDialog(String email, String correct, JLabel msgLabel) {
+        String entered = JOptionPane.showInputDialog(
                 this,
-                "Welcome, " + user.getName() + "\nRole: " + user.getUserRole(),
-                "Access granted",
-                JOptionPane.INFORMATION_MESSAGE
+                "Enter the 6-digit code sent to:\n" + email,
+                "Verification code",
+                JOptionPane.PLAIN_MESSAGE
         );
+        if (entered == null) return;
+        if (!entered.trim().equals(correct)) {
+            err(msgLabel, "Incorrect code. Please try again."); return;
+        }
+        showNewPasswordDialog(email, msgLabel);
+    }
+
+    private void showNewPasswordDialog(String email, JLabel msgLabel) {
+        JPasswordField f1 = new JPasswordField(20);
+        JPasswordField f2 = new JPasswordField(20);
+        JPanel panel = new JPanel(new GridLayout(4, 1, 4, 4));
+        panel.add(new JLabel("New password (min 6 characters):"));
+        panel.add(f1);
+        panel.add(new JLabel("Confirm new password:"));
+        panel.add(f2);
+
+        int res = JOptionPane.showConfirmDialog(this, panel,
+                "Set new password", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (res != JOptionPane.OK_OPTION) return;
+
+        String p1 = new String(f1.getPassword()).trim();
+        String p2 = new String(f2.getPassword()).trim();
+
+        if (p1.length() < 6) { err(msgLabel, "Password must be at least 6 characters."); return; }
+        if (!p1.equals(p2)) { err(msgLabel, "Passwords do not match."); return; }
+
+        UserStore.getInstance().updatePassword(email, p1);
+        msgLabel.setForeground(C_SUCCESS);
+        msgLabel.setText("Password updated! Please sign in.");
+        Timer t = new Timer(2000, ev -> cardLayout.show(cardContainer, "LOGIN"));
+        t.setRepeats(false); t.start();
     }
 
     // ================================================================
-    // custom components
+    // navigation
     // ================================================================
-    private JPanel createCard(int width, int height) {
+    private void openMain(User user) {
+        dispose();
+        new MainGUI(park, user, UserStore.getInstance());
+    }
+
+    // ================================================================
+    // validation
+    // ================================================================
+    private boolean validEmail(String email) {
+        if (email == null || email.isBlank()) return false;
+        int at = email.indexOf('@');
+        if (at < 1) return false;
+        String domain = email.substring(at + 1);
+        int dot = domain.lastIndexOf('.');
+        return dot > 0 && dot < domain.length() - 1;
+    }
+
+    // ================================================================
+    // components
+    // ================================================================
+    private JPanel card(int w, int h) {
         JPanel p = new JPanel() {
             @Override protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setColor(C_CARD);
-                g2.fill(new RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), 18, 18));
-                g2.setColor(C_BORDER);
-                g2.setStroke(new BasicStroke(1f));
-                g2.draw(new RoundRectangle2D.Float(0.5f, 0.5f, getWidth()-1, getHeight()-1, 18, 18));
+                g2.fill(new RoundRectangle2D.Float(0,0,getWidth(),getHeight(),18,18));
+                g2.setColor(C_BORDER); g2.setStroke(new BasicStroke(1f));
+                g2.draw(new RoundRectangle2D.Float(.5f,.5f,getWidth()-1,getHeight()-1,18,18));
                 g2.dispose();
             }
         };
-        p.setOpaque(false);
-        p.setPreferredSize(new Dimension(width, height));
-        return p;
+        p.setOpaque(false); p.setPreferredSize(new Dimension(w, h)); return p;
     }
 
     private JTextField textField(String hint) {
-        JTextField field = new JTextField() {
+        JTextField f = new JTextField() {
             @Override protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setColor(C_FIELD_BG);
-                g2.fill(new RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), 8, 8));
-                g2.dispose();
-                super.paintComponent(g);
+                g2.fill(new RoundRectangle2D.Float(0,0,getWidth(),getHeight(),8,8));
+                g2.dispose(); super.paintComponent(g);
                 if (getText().isEmpty() && !isFocusOwner()) {
                     Graphics2D g3 = (Graphics2D) g.create();
-                    g3.setColor(C_TEXT2);
-                    g3.setFont(F_FIELD);
+                    g3.setColor(C_TEXT2); g3.setFont(F_FIELD);
                     FontMetrics fm = g3.getFontMetrics();
-                    int y = (getHeight() + fm.getAscent() - fm.getDescent()) / 2;
-                    g3.drawString(hint, 12, y);
+                    g3.drawString(hint, 12, (getHeight()+fm.getAscent()-fm.getDescent())/2);
                     g3.dispose();
                 }
             }
         };
-        field.setOpaque(false);
-        field.setFont(F_FIELD);
-        field.setForeground(C_TEXT);
-        field.setCaretColor(C_PRIMARY);
-        field.setBorder(roundedBorder(C_BORDER));
-        field.setPreferredSize(new Dimension(0, 42));
-        field.addFocusListener(focusHighlight(field));
-        return field;
+        f.setOpaque(false); f.setFont(F_FIELD); f.setForeground(C_TEXT);
+        f.setCaretColor(C_PRIMARY); f.setBorder(rBorder(C_BORDER));
+        f.setPreferredSize(new Dimension(0, 42));
+        f.addFocusListener(focusHL(f)); return f;
     }
 
-    private JPasswordField passwordField() {
-        JPasswordField field = new JPasswordField() {
+    private JPasswordField passField() {
+        JPasswordField f = new JPasswordField() {
             @Override protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setColor(C_FIELD_BG);
-                g2.fill(new RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), 8, 8));
-                g2.dispose();
-                super.paintComponent(g);
+                g2.fill(new RoundRectangle2D.Float(0,0,getWidth(),getHeight(),8,8));
+                g2.dispose(); super.paintComponent(g);
                 if (getPassword().length == 0 && !isFocusOwner()) {
                     Graphics2D g3 = (Graphics2D) g.create();
-                    g3.setColor(C_TEXT2);
-                    g3.setFont(F_FIELD.deriveFont(Font.PLAIN));
+                    g3.setColor(C_TEXT2); g3.setFont(F_FIELD.deriveFont(Font.PLAIN));
                     FontMetrics fm = g3.getFontMetrics();
-                    int y = (getHeight() + fm.getAscent() - fm.getDescent()) / 2;
-                    g3.drawString("At least 6 characters", 12, y);
+                    g3.drawString("At least 6 characters", 12,
+                            (getHeight()+fm.getAscent()-fm.getDescent())/2);
                     g3.dispose();
                 }
             }
         };
-        field.setOpaque(false);
-        field.setFont(F_FIELD);
-        field.setForeground(C_TEXT);
-        field.setCaretColor(C_PRIMARY);
-        field.setEchoChar('\u25CF');
-        field.setBorder(roundedBorder(C_BORDER));
-        field.setPreferredSize(new Dimension(0, 42));
-        field.addFocusListener(focusHighlight(field));
-        return field;
+        f.setOpaque(false); f.setFont(F_FIELD); f.setForeground(C_TEXT);
+        f.setCaretColor(C_PRIMARY); f.setEchoChar('\u25CF');
+        f.setBorder(rBorder(C_BORDER)); f.setPreferredSize(new Dimension(0, 42));
+        f.addFocusListener(focusHL(f)); return f;
     }
 
-    private void styleCombo(JComboBox<String> combo) {
-        combo.setFont(F_FIELD);
-        combo.setBackground(C_FIELD_BG);
-        combo.setForeground(C_TEXT);
-        combo.setPreferredSize(new Dimension(0, 42));
-        combo.setBorder(roundedBorder(C_BORDER));
+    private void styleCombo(JComboBox<String> c) {
+        c.setFont(F_FIELD); c.setBackground(C_FIELD_BG); c.setForeground(C_TEXT);
+        c.setPreferredSize(new Dimension(0, 42)); c.setBorder(rBorder(C_BORDER));
     }
 
-    private JButton primaryButton(String text) {
+    private JButton primaryBtn(String text) {
         JButton btn = new JButton(text) {
             @Override protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                Color bg = !isEnabled()            ? C_BORDER
+                Color bg = !isEnabled() ? C_BORDER
                         : getModel().isPressed()  ? C_PRIMARY.darker()
-                          : getModel().isRollover() ? C_PRIMARY_H
-                            : C_PRIMARY;
+                          : getModel().isRollover() ? C_PRIMARY_H : C_PRIMARY;
                 g2.setColor(bg);
-                g2.fill(new RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), 10, 10));
-                g2.dispose();
-                super.paintComponent(g);
+                g2.fill(new RoundRectangle2D.Float(0,0,getWidth(),getHeight(),10,10));
+                g2.dispose(); super.paintComponent(g);
             }
         };
-        btn.setFont(F_BTN);
-        btn.setForeground(Color.WHITE);
-        btn.setOpaque(false);
-        btn.setContentAreaFilled(false);
-        btn.setBorderPainted(false);
-        btn.setFocusPainted(false);
+        btn.setFont(F_BTN); btn.setForeground(Color.WHITE); btn.setOpaque(false);
+        btn.setContentAreaFilled(false); btn.setBorderPainted(false); btn.setFocusPainted(false);
         btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        btn.setPreferredSize(new Dimension(0, 44));
-        return btn;
+        btn.setPreferredSize(new Dimension(0, 44)); return btn;
     }
 
-    private JButton linkButton(String text) {
+    private JButton linkBtn(String text) {
         JButton btn = new JButton(text);
-        btn.setFont(F_LINK);
-        btn.setForeground(C_PRIMARY);
-        btn.setOpaque(false);
-        btn.setContentAreaFilled(false);
-        btn.setBorderPainted(false);
-        btn.setFocusPainted(false);
+        btn.setFont(F_LINK); btn.setForeground(C_PRIMARY); btn.setOpaque(false);
+        btn.setContentAreaFilled(false); btn.setBorderPainted(false); btn.setFocusPainted(false);
         btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         btn.addMouseListener(new MouseAdapter() {
             @Override public void mouseEntered(MouseEvent e) { btn.setForeground(C_PRIMARY_H); }
             @Override public void mouseExited(MouseEvent  e) { btn.setForeground(C_PRIMARY); }
-        });
-        return btn;
+        }); return btn;
     }
 
-    private JLabel label(String text) {
-        JLabel lbl = new JLabel(text);
-        lbl.setFont(F_LABEL); lbl.setForeground(C_TEXT2);
-        return lbl;
-    }
+    private JLabel label(String t) { JLabel l=new JLabel(t); l.setFont(F_LABEL); l.setForeground(C_TEXT2); return l; }
+    private JLabel centeredLabel(String t, Font f, Color c) { JLabel l=new JLabel(t,SwingConstants.CENTER); l.setFont(f); l.setForeground(c); return l; }
+    private JLabel errLabel() { JLabel l=new JLabel(" ",SwingConstants.CENTER); l.setFont(F_LABEL); l.setForeground(C_ERROR); return l; }
+    private JSeparator sep() { JSeparator s=new JSeparator(); s.setForeground(C_BORDER); s.setBackground(C_BORDER); return s; }
+    private JPanel col(String lbl, String hint) { JPanel p=new JPanel(new BorderLayout(0,4)); p.setOpaque(false); p.add(label(lbl),BorderLayout.NORTH); p.add(textField(hint),BorderLayout.CENTER); return p; }
 
-    private JLabel centeredLabel(String text, Font font, Color color) {
-        JLabel lbl = new JLabel(text, SwingConstants.CENTER);
-        lbl.setFont(font); lbl.setForeground(color);
-        return lbl;
-    }
+    private GridBagConstraints gbc() { GridBagConstraints g=new GridBagConstraints(); g.gridx=0; g.fill=GridBagConstraints.HORIZONTAL; return g; }
+    private Insets ins(int t,int l,int b,int r) { return new Insets(t,l,b,r); }
+    private JPanel wrapBtn(JButton btn, int align) { JPanel p=new JPanel(new FlowLayout(align,0,0)); p.setOpaque(false); p.add(btn); return p; }
+    private Border rBorder(Color c) { return BorderFactory.createCompoundBorder(new RndBorder(8,c),BorderFactory.createEmptyBorder(4,12,4,12)); }
+    private FocusAdapter focusHL(JComponent c) { return new FocusAdapter() { @Override public void focusGained(FocusEvent e){c.setBorder(rBorder(C_PRIMARY));} @Override public void focusLost(FocusEvent e){c.setBorder(rBorder(C_BORDER));} }; }
+    private void err(JLabel l, String msg) { l.setForeground(C_ERROR); l.setText(msg); }
+    private void clearFields(JTextField... fs) { for(JTextField f:fs) f.setText(""); }
 
-    private JLabel errorLabel() {
-        JLabel lbl = new JLabel(" ", SwingConstants.CENTER);
-        lbl.setFont(F_LABEL); lbl.setForeground(C_ERROR);
-        return lbl;
-    }
-
-    private JSeparator separator() {
-        JSeparator sep = new JSeparator();
-        sep.setForeground(C_BORDER); sep.setBackground(C_BORDER);
-        return sep;
-    }
-
-    // ----------------------------------------------------------------
-    // layout and border helpers
-    // ----------------------------------------------------------------
-    private GridBagConstraints gbc() {
-        GridBagConstraints g = new GridBagConstraints();
-        g.gridx = 0; g.fill = GridBagConstraints.HORIZONTAL;
-        return g;
-    }
-
-    private Insets ins(int top, int left, int bottom, int right) {
-        return new Insets(top, left, bottom, right);
-    }
-
-    private JPanel wrap(JButton btn, int alignment) {
-        JPanel p = new JPanel(new FlowLayout(alignment, 0, 0));
-        p.setOpaque(false); p.add(btn);
-        return p;
-    }
-
-    private Border roundedBorder(Color color) {
-        return BorderFactory.createCompoundBorder(
-                new RoundedBorder(8, color),
-                BorderFactory.createEmptyBorder(4, 12, 4, 12)
-        );
-    }
-
-    private FocusAdapter focusHighlight(JComponent field) {
-        return new FocusAdapter() {
-            @Override public void focusGained(FocusEvent e) { field.setBorder(roundedBorder(C_PRIMARY)); }
-            @Override public void focusLost(FocusEvent   e) { field.setBorder(roundedBorder(C_BORDER)); }
-        };
-    }
-
-    private void showError(JLabel lbl, String message) {
-        lbl.setForeground(C_ERROR); lbl.setText(message);
-    }
-
-    private void clearFields(JTextField... fields) {
-        for (JTextField f : fields) f.setText("");
-    }
-
-    // ================================================================
-    // custom rounded border
-    // ================================================================
-    private static class RoundedBorder extends AbstractBorder {
-        private final int   radius;
-        private final Color color;
-
-        public RoundedBorder(int radius, Color color) {
-            this.radius = radius;
-            this.color  = color;
-        }
-
-        @Override
-        public void paintBorder(Component c, Graphics g, int x, int y, int w, int h) {
-            Graphics2D g2 = (Graphics2D) g.create();
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(color);
-            g2.setStroke(new BasicStroke(1.2f));
-            g2.draw(new RoundRectangle2D.Float(x + 0.5f, y + 0.5f, w - 1, h - 1, radius, radius));
-            g2.dispose();
+    private static class RndBorder extends AbstractBorder {
+        final int r; final Color c;
+        RndBorder(int r,Color c){this.r=r;this.c=c;}
+        @Override public void paintBorder(Component comp,Graphics g,int x,int y,int w,int h){
+            Graphics2D g2=(Graphics2D)g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(c); g2.setStroke(new BasicStroke(1.2f));
+            g2.draw(new RoundRectangle2D.Float(x+.5f,y+.5f,w-1,h-1,r,r)); g2.dispose();
         }
     }
 }

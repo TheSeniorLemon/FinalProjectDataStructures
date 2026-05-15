@@ -1,9 +1,6 @@
 package co.edu.uniquindio.techpark.view;
 
-import co.edu.uniquindio.techpark.model.entities.Attraction;
-import co.edu.uniquindio.techpark.model.entities.Park;
-import co.edu.uniquindio.techpark.model.entities.UserStore;
-import co.edu.uniquindio.techpark.model.entities.Zone;
+import co.edu.uniquindio.techpark.model.entities.*;
 import co.edu.uniquindio.techpark.model.enums.AttractionStatus;
 import co.edu.uniquindio.techpark.model.enums.AttractionType;
 import co.edu.uniquindio.techpark.model.structures.LinkedList;
@@ -17,23 +14,23 @@ import java.awt.geom.*;
 
 public class AttractionCRUD extends JPanel {
 
-    private static final Color C_BG      = new Color(10, 14, 20);
-    private static final Color C_CARD    = new Color(18, 24, 32);
-    private static final Color C_BORDER  = new Color(40, 50, 64);
+    private static final Color C_BG = new Color(10, 14, 20);
+    private static final Color C_CARD = new Color(18, 24, 32);
+    private static final Color C_BORDER = new Color(40, 50, 64);
     private static final Color C_PRIMARY = new Color(56, 130, 255);
-    private static final Color C_TEXT    = new Color(224, 232, 244);
-    private static final Color C_TEXT2   = new Color(120, 134, 154);
+    private static final Color C_TEXT = new Color(224, 232, 244);
+    private static final Color C_TEXT2 = new Color(120, 134, 154);
     private static final Color C_SUCCESS = new Color(52, 199, 100);
     private static final Color C_WARNING = new Color(255, 180, 50);
-    private static final Color C_DANGER  = new Color(240, 80, 80);
-    private static final Color C_FIELD   = new Color(10, 14, 20);
+    private static final Color C_DANGER = new Color(240, 80, 80);
+    private static final Color C_FIELD = new Color(10, 14, 20);
 
-    private static final Font F_TITLE   = new Font("Segoe UI", Font.BOLD, 16);
-    private static final Font F_BODY    = new Font("Segoe UI", Font.PLAIN, 13);
-    private static final Font F_SMALL   = new Font("Segoe UI", Font.PLAIN, 11);
-    private static final Font F_BTN     = new Font("Segoe UI", Font.BOLD, 12);
-    private static final Font F_LABEL   = new Font("Segoe UI", Font.PLAIN, 12);
-    private static final Font F_FIELD   = new Font("Segoe UI", Font.PLAIN, 13);
+    private static final Font F_TITLE = new Font("Segoe UI", Font.BOLD, 16);
+    private static final Font F_BODY = new Font("Segoe UI", Font.PLAIN, 13);
+    private static final Font F_SMALL = new Font("Segoe UI", Font.PLAIN, 11);
+    private static final Font F_BTN = new Font("Segoe UI", Font.BOLD, 12);
+    private static final Font F_LABEL = new Font("Segoe UI", Font.PLAIN, 12);
+    private static final Font F_FIELD = new Font("Segoe UI", Font.PLAIN, 13);
 
     private final Park  park;
     private DefaultTableModel tableModel;
@@ -79,10 +76,10 @@ public class AttractionCRUD extends JPanel {
         bottomBar.setOpaque(false);
         bottomBar.setBorder(BorderFactory.createEmptyBorder(12, 24, 20, 24));
 
-        JButton btnEdit   = actionBtn("Edit",          C_WARNING);
-        JButton btnDelete = actionBtn("Delete",        C_DANGER);
+        JButton btnEdit = actionBtn("Edit", C_WARNING);
+        JButton btnDelete = actionBtn("Delete", C_DANGER);
         JButton btnStatus = actionBtn("Change Status", new Color(100, 80, 200));
-        JButton btnRefresh = actionBtn("Refresh",      C_TEXT2);
+        JButton btnRefresh = actionBtn("Refresh", C_TEXT2);
 
         bottomBar.add(btnEdit);
         bottomBar.add(btnDelete);
@@ -154,25 +151,25 @@ public class AttractionCRUD extends JPanel {
     // ================================================================
     private void showAddDialog() {
         JDialog dialog = dialog("Add Attraction", 480, 540);
-        JPanel form    = formPanel();
+        JPanel form = formPanel();
 
-        JTextField  nameField    = field("e.g. Space Coaster");
-        JComboBox<String> typeCombo  = combo(AttractionType.values());
-        JComboBox<String> zoneCombo  = buildZoneCombo();
-        JTextField  capField     = field("24");
-        JTextField  heightField  = field("1.40");
-        JTextField  ageField     = field("12");
-        JTextField  costField    = field("15000");
-        JTextField  waitField    = field("20");
+        JTextField nameField = field("e.g. Space Coaster");
+        JComboBox<String> typeCombo = combo(AttractionType.values());
+        JComboBox<String> zoneCombo = buildZoneCombo();
+        JTextField capField = field("24");
+        JTextField heightField = field("1.40");
+        JTextField ageField = field("12");
+        JTextField costField = field("15000");
+        JTextField waitField = field("20");
 
-        addRow(form, "Name *",           nameField);
-        addRow(form, "Type *",           typeCombo);
-        addRow(form, "Zone *",           zoneCombo);
+        addRow(form, "Name *", nameField);
+        addRow(form, "Type *", typeCombo);
+        addRow(form, "Zone *", zoneCombo);
         addRow(form, "Capacity/cycle *", capField);
-        addRow(form, "Min. height (m)",  heightField);
-        addRow(form, "Min. age",         ageField);
-        addRow(form, "Additional cost",  costField);
-        addRow(form, "Est. wait (min)",  waitField);
+        addRow(form, "Min. height (m)", heightField);
+        addRow(form, "Min. age", ageField);
+        addRow(form, "Additional cost", costField);
+        addRow(form, "Est. wait (min)", waitField);
 
         JLabel errLbl = errLabel();
         form.add(Box.createRigidArea(new Dimension(0, 6)));
@@ -191,18 +188,18 @@ public class AttractionCRUD extends JPanel {
             String zoneId = zoneIdFromCombo(zoneCombo);
             if (zoneId == null) { err(errLbl, "Select a zone."); return; }
 
-            int    cap;
-            float  height;
-            int    age;
+            int cap;
+            float height;
+            int age;
             double cost;
-            int    wait;
+            int wait;
 
             try {
-                cap    = Integer.parseInt(capField.getText().trim());
+                cap = Integer.parseInt(capField.getText().trim());
                 height = Float.parseFloat(heightField.getText().trim().replace(",","."));
-                age    = Integer.parseInt(ageField.getText().trim());
-                cost   = Double.parseDouble(costField.getText().trim());
-                wait   = Integer.parseInt(waitField.getText().trim());
+                age = Integer.parseInt(ageField.getText().trim());
+                cost = Double.parseDouble(costField.getText().trim());
+                wait = Integer.parseInt(waitField.getText().trim());
             } catch (NumberFormatException ex) {
                 err(errLbl, "Check numeric fields."); return;
             }
@@ -236,19 +233,19 @@ public class AttractionCRUD extends JPanel {
         JDialog dialog = dialog("Edit - " + a.getName(), 480, 420);
         JPanel  form   = formPanel();
 
-        JTextField nameField   = field(a.getName());
-        JTextField capField    = field(String.valueOf(a.getCapacityPerCycle()));
+        JTextField nameField = field(a.getName());
+        JTextField capField = field(String.valueOf(a.getCapacityPerCycle()));
         JTextField heightField = field(String.valueOf(a.getMinimumHeight()));
-        JTextField ageField    = field(String.valueOf(a.getMinimumAge()));
-        JTextField costField   = field(String.valueOf(a.getAdditionalCost()));
-        JTextField waitField   = field(String.valueOf(a.getEstimatedWaitTime()));
+        JTextField ageField = field(String.valueOf(a.getMinimumAge()));
+        JTextField costField = field(String.valueOf(a.getAdditionalCost()));
+        JTextField waitField = field(String.valueOf(a.getEstimatedWaitTime()));
 
-        addRow(form, "Name *",           nameField);
+        addRow(form, "Name *", nameField);
         addRow(form, "Capacity/cycle *", capField);
-        addRow(form, "Min. height (m)",  heightField);
-        addRow(form, "Min. age",         ageField);
-        addRow(form, "Additional cost",  costField);
-        addRow(form, "Est. wait (min)",  waitField);
+        addRow(form, "Min. height (m)", heightField);
+        addRow(form, "Min. age", ageField);
+        addRow(form, "Additional cost", costField);
+        addRow(form, "Est. wait (min)", waitField);
 
         JLabel errLbl = errLabel();
         form.add(Box.createRigidArea(new Dimension(0, 6)));
@@ -264,11 +261,11 @@ public class AttractionCRUD extends JPanel {
             String name = nameField.getText().trim();
             if (name.isEmpty()) { err(errLbl, "Name is required."); return; }
             try {
-                int    cap    = Integer.parseInt(capField.getText().trim());
-                float  height = Float.parseFloat(heightField.getText().trim().replace(",","."));
-                int    age    = Integer.parseInt(ageField.getText().trim());
-                double cost   = Double.parseDouble(costField.getText().trim());
-                int    wait   = Integer.parseInt(waitField.getText().trim());
+                int cap = Integer.parseInt(capField.getText().trim());
+                float height = Float.parseFloat(heightField.getText().trim().replace(",","."));
+                int age = Integer.parseInt(ageField.getText().trim());
+                double cost = Double.parseDouble(costField.getText().trim());
+                int wait = Integer.parseInt(waitField.getText().trim());
 
                 a.setName(name);
                 a.setCapacityPerCycle(cap);
@@ -332,8 +329,8 @@ public class AttractionCRUD extends JPanel {
         }
 
         AttractionStatus newStatus = switch (choice) {
-            case 0  -> AttractionStatus.ACTIVE;
-            case 1  -> AttractionStatus.MAINTENANCE;
+            case 0 -> AttractionStatus.ACTIVE;
+            case 1 -> AttractionStatus.MAINTENANCE;
             default -> AttractionStatus.CLOSED;
         };
 
@@ -398,10 +395,10 @@ public class AttractionCRUD extends JPanel {
                 JLabel lbl = (JLabel) super.getTableCellRendererComponent(tbl,val,sel,focus,r,c);
                 String s = val != null ? val.toString() : "";
                 lbl.setForeground(switch (s) {
-                    case "ACTIVE"      -> C_SUCCESS;
+                    case "ACTIVE" -> C_SUCCESS;
                     case "MAINTENANCE" -> C_WARNING;
-                    case "CLOSED"      -> C_DANGER;
-                    default            -> C_TEXT;
+                    case "CLOSED" -> C_DANGER;
+                    default -> C_TEXT;
                 });
                 return lbl;
             }
@@ -496,6 +493,6 @@ public class AttractionCRUD extends JPanel {
         l.setAlignmentX(Component.LEFT_ALIGNMENT); return l;
     }
 
-    private void err(JLabel l, String msg)  { l.setForeground(C_DANGER);  l.setText(msg); }
-    private void info(String msg)           { JOptionPane.showMessageDialog(this, msg, "Info", JOptionPane.INFORMATION_MESSAGE); }
+    private void err(JLabel l, String msg) { l.setForeground(C_DANGER);  l.setText(msg); }
+    private void info(String msg) { JOptionPane.showMessageDialog(this, msg, "Info", JOptionPane.INFORMATION_MESSAGE); }
 }

@@ -91,8 +91,6 @@ public class UserStore {
     // ----------------------------------------------------------------
     // getters
     // ----------------------------------------------------------------
-
-
     public LinkedList<Visitor> getVisitors() {
         return visitors;
     }
