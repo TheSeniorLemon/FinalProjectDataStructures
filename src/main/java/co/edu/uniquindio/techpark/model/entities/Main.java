@@ -12,7 +12,7 @@ public class Main {
     public static void main(String[] args) {
         EmailService.getInstance().configure(
                 "techparkuq@gmail.com",
-                "ysmy vxcx zytj ydng"
+                "nyux bwpe eddn zsug"
         );
 
         SwingUtilities.invokeLater(() -> {
@@ -50,9 +50,9 @@ public class Main {
     // ----------------------------------------------------------------
     private static void loadZones(Park park) {
         park.addZone(new Zone("ZONE-001", "Adventure World", 150));
-        park.addZone(new Zone("ZONE-002", "Aqua Kingdom",    120));
-        park.addZone(new Zone("ZONE-003", "Kids Land",       100));
-        park.addZone(new Zone("ZONE-004", "Tech Arena",       80));
+        park.addZone(new Zone("ZONE-002", "Aqua Kingdom", 120));
+        park.addZone(new Zone("ZONE-003", "Kids Land", 100));
+        park.addZone(new Zone("ZONE-004", "Tech Arena", 80));
     }
 
     // ----------------------------------------------------------------
@@ -213,7 +213,7 @@ public class Main {
         visitors[0].setTicket(new FastPassTicket("TK-0001",50000.0, today()));
         visitors[1].setTicket(new GeneralTicket( "TK-0002",25000.0, today()));
         visitors[2].setTicket(new FastPassTicket("TK-0003",50000.0, today()));
-        visitors[3].setTicket(new FamilyTicket(  "TK-0004",80000.0, today(), 15.0, 4));
+        visitors[3].setTicket(new FamilyTicket( "TK-0004",80000.0, today(), 15.0, 4));
         visitors[4].setTicket(new GeneralTicket( "TK-0005",25000.0, today()));
 
         // load balances
@@ -228,10 +228,10 @@ public class Main {
         park.registerVisitor(visitors[1]);
 
         // virtual queues
-        Attraction rc  = park.findAttractionByName("Extreme Roller Coaster");
-        Attraction vr  = park.findAttractionByName("VR Escape Room");
-        if (rc  != null) { rc.addToVirtualQueue(visitors[1]); rc.addToVirtualQueue(visitors[0]); }
-        if (vr  != null) { vr.addToVirtualQueue(visitors[2]); vr.addToVirtualQueue(visitors[1]); }
+        Attraction rc = park.findAttractionByName("Extreme Roller Coaster");
+        Attraction vr = park.findAttractionByName("VR Escape Room");
+        if (rc != null) { rc.addToVirtualQueue(visitors[1]); rc.addToVirtualQueue(visitors[0]); }
+        if (vr != null) { vr.addToVirtualQueue(visitors[2]); vr.addToVirtualQueue(visitors[1]); }
 
         // favorites and history for alice
         visitors[0].addFavorite("ATT-001");

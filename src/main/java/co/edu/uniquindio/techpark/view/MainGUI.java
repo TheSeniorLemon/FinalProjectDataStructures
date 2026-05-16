@@ -52,9 +52,9 @@ public class MainGUI extends JFrame {
     private CardLayout contentLayout;
 
     public MainGUI(Park park, User currentUser, UserStore store) {
-        this.park        = park;
+        this.park = park;
         this.currentUser = currentUser;
-        this.store       = store;
+        this.store = store;
         setupWindow();
         buildUI();
         setVisible(true);
@@ -262,7 +262,7 @@ public class MainGUI extends JFrame {
         UserRole role = currentUser.getUserRole();
 
         if (role == UserRole.VISITOR) {
-            mapPanel = new MapPanel(park);
+            //mapPanel = new MapPanel(park);
             contentPanel.add(buildOverviewPanel(), "OVERVIEW");
             contentPanel.add(buildQueuePanel(), "QUEUE");
             contentPanel.add(buildRoutesPanel(), "ROUTES");
@@ -270,14 +270,14 @@ public class MainGUI extends JFrame {
             contentPanel.add(buildHistoryPanel(), "HISTORY");
 
         } else if (role == UserRole.OPERATOR) {
-            mapPanel = new MapPanel(park);
+            //mapPanel = new MapPanel(park);
             contentPanel.add(buildOverviewPanel(), "OVERVIEW");
             contentPanel.add(buildAttractionsPanel(), "ATTRACTIONS");
             contentPanel.add(buildQueueControlPanel(), "QUEUE_OP");
             contentPanel.add(buildReviewsPanel(), "REVIEWS");
 
         } else { // ADMINISTRATOR
-            mapPanel = new MapPanel(park);
+            //mapPanel = new MapPanel(park);
             contentPanel.add(buildDashboardPanel(), "DASHBOARD");
             contentPanel.add(new VisitorCRUD(park, store), "CRUD_VISITORS");
             contentPanel.add(new OperatorCRUD(park, store), "CRUD_OPERATORS");

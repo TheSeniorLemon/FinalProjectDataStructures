@@ -18,39 +18,39 @@ public class MapPanel extends JPanel {
     // ----------------------------------------------------------------
     // theme
     // ----------------------------------------------------------------
-    private static final Color C_BG         = new Color(10, 14, 20);
-    private static final Color C_CTRL_BAR   = new Color(15, 20, 28);
-    private static final Color C_BORDER     = new Color(40, 50, 64);
-    private static final Color C_TEXT       = new Color(224, 232, 244);
-    private static final Color C_TEXT2      = new Color(120, 134, 154);
-    private static final Color C_MAP_BG     = new Color(20, 34, 22);
+    private static final Color C_BG = new Color(10, 14, 20);
+    private static final Color C_CTRL_BAR = new Color(15, 20, 28);
+    private static final Color C_BORDER = new Color(40, 50, 64);
+    private static final Color C_TEXT = new Color(224, 232, 244);
+    private static final Color C_TEXT2 = new Color(120, 134, 154);
+    private static final Color C_MAP_BG = new Color(20, 34, 22);
 
     // node status colors
-    private static final Color NODE_ACTIVE   = new Color(52, 199, 100);
-    private static final Color NODE_MAINT    = new Color(255, 180, 50);
-    private static final Color NODE_CLOSED   = new Color(240, 80,  80);
-    private static final Color NODE_BORDER   = new Color(200, 220, 255);
+    private static final Color NODE_ACTIVE = new Color(52, 199, 100);
+    private static final Color NODE_MAINT = new Color(255, 180, 50);
+    private static final Color NODE_CLOSED = new Color(240, 80,  80);
+    private static final Color NODE_BORDER = new Color(200, 220, 255);
 
     // edge colors
-    private static final Color EDGE_NORMAL   = new Color(80, 100, 120);
-    private static final Color EDGE_ROUTE    = new Color(255, 220, 50);
+    private static final Color EDGE_NORMAL = new Color(80, 100, 120);
+    private static final Color EDGE_ROUTE = new Color(255, 220, 50);
 
     // zone area fill + border colors
     private static final Object[][] ZONE_STYLES = {
-            {"ZONE-001", "Adventure World",  45,  40, 265, 240, new Color(255,100, 50, 35), new Color(255,140, 60)},
-            {"ZONE-002", "Aqua Kingdom",    380,  40, 270, 250, new Color( 50,150,255, 35), new Color( 60,170,255)},
-            {"ZONE-003", "Kids Land",        40, 355, 305, 210, new Color(100,220,100, 35), new Color( 80,200,100)},
-            {"ZONE-004", "Tech Arena",      410, 355, 300, 200, new Color(180, 80,255, 35), new Color(180, 90,255)},
+            {"ZONE-001", "Adventure World", 45, 40, 265, 240, new Color(255,100, 50, 35), new Color(255,140, 60)},
+            {"ZONE-002", "Aqua Kingdom", 380,  40, 270, 250, new Color( 50,150,255, 35), new Color( 60,170,255)},
+            {"ZONE-003", "Kids Land", 40, 355, 305, 210, new Color(100,220,100, 35), new Color( 80,200,100)},
+            {"ZONE-004", "Tech Arena", 410, 355, 300, 200, new Color(180, 80,255, 35), new Color(180, 90,255)},
     };
 
     // fonts
-    private static final Font F_ZONE   = new Font("Segoe UI", Font.BOLD,  12);
-    private static final Font F_NODE   = new Font("Segoe UI", Font.BOLD,  10);
-    private static final Font F_EDGE   = new Font("Segoe UI", Font.PLAIN,  9);
-    private static final Font F_CTRL   = new Font("Segoe UI", Font.PLAIN, 12);
-    private static final Font F_BTN    = new Font("Segoe UI", Font.BOLD,  12);
-    private static final Font F_SMALL  = new Font("Segoe UI", Font.PLAIN, 11);
-    private static final Font F_ICON   = new Font("Segoe UI", Font.BOLD,  11);
+    private static final Font F_ZONE = new Font("Segoe UI", Font.BOLD, 12);
+    private static final Font F_NODE = new Font("Segoe UI", Font.BOLD, 10);
+    private static final Font F_EDGE = new Font("Segoe UI", Font.PLAIN, 9);
+    private static final Font F_CTRL = new Font("Segoe UI", Font.PLAIN, 12);
+    private static final Font F_BTN = new Font("Segoe UI", Font.BOLD, 12);
+    private static final Font F_SMALL = new Font("Segoe UI", Font.PLAIN, 11);
+    private static final Font F_ICON = new Font("Segoe UI", Font.BOLD, 11);
 
     private static final int NODE_R = 24; // node radius in world coords
 
@@ -60,12 +60,12 @@ public class MapPanel extends JPanel {
     private final Park park;
     private final Map<String, int[]> positions = new HashMap<>();
 
-    private double scale  = 1.0;
-    private double panX   = 40.0;
-    private double panY   = 20.0;
+    private double scale = 1.0;
+    private double panX = 40.0;
+    private double panY = 20.0;
     private boolean dragging;
-    private int    dragMouseX, dragMouseY;
-    private double dragPanX,   dragPanY;
+    private int dragMouseX, dragMouseY;
+    private double dragPanX, dragPanY;
 
     private LinkedList<Attraction> currentRoute = null;
     private final Set<String>      routeEdgeKeys = new HashSet<>();
@@ -121,8 +121,8 @@ public class MapPanel extends JPanel {
         setLayout(new BorderLayout(0, 0));
         setBackground(C_BG);
         add(buildControlBar(), BorderLayout.NORTH);
-        add(buildCanvas(),     BorderLayout.CENTER);
-        add(buildLegend(),     BorderLayout.SOUTH);
+        add(buildCanvas(), BorderLayout.CENTER);
+        add(buildLegend(), BorderLayout.SOUTH);
     }
 
     // ----------------------------------------------------------------
@@ -141,10 +141,10 @@ public class MapPanel extends JPanel {
         toCombo = styledCombo(200);
         bar.add(toCombo);
 
-        JButton btnFind    = colorBtn("Find route",   new Color(56, 130, 255));
-        JButton btnClear   = colorBtn("Clear route",  new Color(80,  90, 110));
-        JButton btnResetV  = colorBtn("Reset view",   new Color(60,  75,  95));
-        JButton btnRefresh = colorBtn("Refresh",      new Color(60,  75,  95));
+        JButton btnFind = colorBtn("Find route", new Color(56, 130, 255));
+        JButton btnClear = colorBtn("Clear route", new Color(80,  90, 110));
+        JButton btnResetV = colorBtn("Reset view", new Color(60,  75,  95));
+        JButton btnRefresh = colorBtn("Refresh", new Color(60,  75,  95));
 
         bar.add(btnFind); bar.add(btnClear); bar.add(btnResetV); bar.add(btnRefresh);
 
@@ -171,9 +171,9 @@ public class MapPanel extends JPanel {
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,       RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,  RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-                g2.setRenderingHint(RenderingHints.KEY_RENDERING,          RenderingHints.VALUE_RENDER_QUALITY);
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+                g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
                 paintMap(g2);
                 g2.dispose();
             }
@@ -195,9 +195,9 @@ public class MapPanel extends JPanel {
         canvas.addMouseListener(new MouseAdapter() {
             @Override public void mousePressed(MouseEvent e) {
                 if (!SwingUtilities.isLeftMouseButton(e)) return;
-                dragging   = true;
+                dragging = true;
                 dragMouseX = e.getX(); dragMouseY = e.getY();
-                dragPanX   = panX;     dragPanY   = panY;
+                dragPanX = panX; dragPanY = panY;
                 canvas.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
             }
             @Override public void mouseReleased(MouseEvent e) {
@@ -240,12 +240,12 @@ public class MapPanel extends JPanel {
         JPanel leg = new JPanel(new FlowLayout(FlowLayout.LEFT, 14, 6));
         leg.setBackground(C_CTRL_BAR);
         leg.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, C_BORDER));
-        leg.add(dotLegend(NODE_ACTIVE,   "Active"));
-        leg.add(dotLegend(NODE_MAINT,    "Maintenance"));
-        leg.add(dotLegend(NODE_CLOSED,   "Closed"));
+        leg.add(dotLegend(NODE_ACTIVE, "Active"));
+        leg.add(dotLegend(NODE_MAINT, "Maintenance"));
+        leg.add(dotLegend(NODE_CLOSED, "Closed"));
         leg.add(vSep());
-        leg.add(lineLegend(EDGE_NORMAL,  2f,  "Path"));
-        leg.add(lineLegend(EDGE_ROUTE,   3f,  "Shortest route (Dijkstra)"));
+        leg.add(lineLegend(EDGE_NORMAL, 2f,  "Path"));
+        leg.add(lineLegend(EDGE_ROUTE, 3f,  "Shortest route (Dijkstra)"));
         leg.add(vSep());
         leg.add(dotLegend(new Color(56, 130, 255), "Queue count"));
         leg.add(vSep());

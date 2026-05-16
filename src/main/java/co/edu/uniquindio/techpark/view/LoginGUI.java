@@ -53,7 +53,7 @@ public class LoginGUI extends JFrame {
     }
 
     private void buildUI() {
-        cardLayout    = new CardLayout();
+        cardLayout = new CardLayout();
         cardContainer = new JPanel(cardLayout);
         cardContainer.setOpaque(false);
         cardContainer.add(buildLoginPanel(), "LOGIN");
