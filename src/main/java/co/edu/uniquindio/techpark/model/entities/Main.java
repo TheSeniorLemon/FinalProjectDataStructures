@@ -11,8 +11,8 @@ public class Main {
 
     public static void main(String[] args) {
         EmailService.getInstance().configure(
-                "your.email@gmail.com",
-                "xxxx xxxx xxxx xxxx"
+                "techparkuq@gmail.com",
+                "ysmy vxcx zytj ydng"
         );
 
         SwingUtilities.invokeLater(() -> {
@@ -236,11 +236,17 @@ public class Main {
         // favorites and history for alice
         visitors[0].addFavorite("ATT-001");
         visitors[0].addFavorite("ATT-010");
-        visitors[0].registerVisit(new VisitHistory("ATT-004","Titan Water Slide", today()+"T10:15", 10000.0, TicketType.FAST_PASS, 1));
-        visitors[0].registerVisit(new VisitHistory("ATT-010","VR Escape Room", today()+"T11:30", 20000.0, TicketType.FAST_PASS, 1));
+        Attraction titanSlide = park.findAttractionByName("Titan Water Slide");
+        if (titanSlide != null)
+            visitors[0].registerVisit(VisitHistory.from(titanSlide, 10000.0, TicketType.FAST_PASS));
+        Attraction vrRoom = park.findAttractionByName("VR Escape Room");
+        if (vrRoom != null)
+            visitors[0].registerVisit(VisitHistory.from(vrRoom, 20000.0, TicketType.FAST_PASS));
 
         // bob's history
-        visitors[1].registerVisit(new VisitHistory("ATT-001","Extreme Roller Coaster", today()+"T09:45", 15000.0, TicketType.GENERAL, 1));
+        Attraction rollerCoaster = park.findAttractionByName("Extreme Roller Coaster");
+        if (rollerCoaster != null)
+            visitors[1].registerVisit(VisitHistory.from(rollerCoaster, 15000.0, TicketType.GENERAL));
 
         // register entries in daily report
         Report report = park.getDailyReport();

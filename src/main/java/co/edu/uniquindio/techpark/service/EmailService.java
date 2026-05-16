@@ -5,13 +5,6 @@ import java.util.Random;
 import javax.mail.*;
 import javax.mail.internet.*;
 
-/**
- * Gmail setup:
- *   1. Enable 2-Step Verification on your Google account.
- *   2. Go to Google Account > Security > App Passwords.
- *   3. Generate an app password for "Mail".
- *   4. Call EmailService.configure("your@gmail.com", "xxxx xxxx xxxx xxxx") once at startup.
- */
 public class EmailService {
 
     private static final EmailService INSTANCE = new EmailService();

@@ -1,6 +1,7 @@
 package co.edu.uniquindio.techpark.model.entities;
 
 import co.edu.uniquindio.techpark.model.enums.TicketType;
+import co.edu.uniquindio.techpark.model.entities.Attraction;
 
 import java.util.Objects;
 
@@ -19,6 +20,27 @@ public class VisitHistory {
         this.incurredCost = incurredCost;
         this.ticketTypeUsed = ticketTypeUsed;
         this.estimatedDurationMinutes = estimatedDurationMinutes;
+    }
+
+    public VisitHistory(String attractionId, String attractionName, String dateTime, double incurredCost, TicketType ticketTypeUsed) {
+        this(attractionId, attractionName, dateTime, incurredCost, ticketTypeUsed, estimateDuration(attractionId));
+    }
+
+    public static VisitHistory from(Attraction attraction, double incurredCost, TicketType ticketType) {
+        return new VisitHistory(
+                attraction.getId(),
+                attraction.getName(),
+                java.time.LocalDateTime.now().toString(),
+                incurredCost,
+                ticketType,
+                attraction.getEstimatedWaitTime() > 0
+                        ? attraction.getEstimatedWaitTime()
+                        : 10
+        );
+    }
+
+    private static int estimateDuration(String attractionId) {
+        return 10;
     }
 
     public String getAttractionId() {

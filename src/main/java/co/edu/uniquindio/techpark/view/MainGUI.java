@@ -45,6 +45,7 @@ public class MainGUI extends JFrame {
     private final Park park;
     private final User currentUser;
     private final UserStore store;
+    private MapPanel mapPanel;
 
     private JPanel sidebarPanel;
     private JPanel contentPanel;
@@ -165,6 +166,7 @@ public class MainGUI extends JFrame {
             addNavButton("Overview", "OVERVIEW");
             addNavButton("My Queue", "QUEUE");
             addNavButton("Route Planner", "ROUTES");
+            addNavButton("Park Map", "MAP");
             addNavButton("Favorites", "FAVORITES");
             addNavButton("Visit History", "HISTORY");
 
@@ -172,6 +174,7 @@ public class MainGUI extends JFrame {
             addNavButton("Overview", "OVERVIEW");
             addNavButton("Attractions", "ATTRACTIONS");
             addNavButton("Queue Control", "QUEUE_OP");
+            addNavButton("Park Map", "MAP");
             addNavButton("Reviews", "REVIEWS");
 
         } else { // ADMINISTRATOR
@@ -184,6 +187,7 @@ public class MainGUI extends JFrame {
             addNavButton("Zones", "CRUD_ZONES");
             addNavSeparator();
             addNavSectionLabel("OPERATIONS");
+            addNavButton("Park Map", "MAP");
             addNavButton("Staff", "STAFF");
             addNavButton("Weather Alert", "WEATHER");
             addNavButton("Reports", "REPORTS");
@@ -258,6 +262,7 @@ public class MainGUI extends JFrame {
         UserRole role = currentUser.getUserRole();
 
         if (role == UserRole.VISITOR) {
+            mapPanel = new MapPanel(park);
             contentPanel.add(buildOverviewPanel(), "OVERVIEW");
             contentPanel.add(buildQueuePanel(), "QUEUE");
             contentPanel.add(buildRoutesPanel(), "ROUTES");
@@ -265,12 +270,14 @@ public class MainGUI extends JFrame {
             contentPanel.add(buildHistoryPanel(), "HISTORY");
 
         } else if (role == UserRole.OPERATOR) {
+            mapPanel = new MapPanel(park);
             contentPanel.add(buildOverviewPanel(), "OVERVIEW");
             contentPanel.add(buildAttractionsPanel(), "ATTRACTIONS");
             contentPanel.add(buildQueueControlPanel(), "QUEUE_OP");
             contentPanel.add(buildReviewsPanel(), "REVIEWS");
 
         } else { // ADMINISTRATOR
+            mapPanel = new MapPanel(park);
             contentPanel.add(buildDashboardPanel(), "DASHBOARD");
             contentPanel.add(new VisitorCRUD(park, store), "CRUD_VISITORS");
             contentPanel.add(new OperatorCRUD(park, store), "CRUD_OPERATORS");
@@ -1001,5 +1008,8 @@ public class MainGUI extends JFrame {
         contentPanel.add(newPanel, key); contentLayout.show(contentPanel, key); highlightNavButton(key);
     }
 
-    private void refreshWeatherPanel() { refreshPanel("WEATHER", buildWeatherPanel()); }
+    private void refreshWeatherPanel() {
+        refreshPanel("WEATHER", buildWeatherPanel());
+        if (mapPanel != null) mapPanel.refresh();
+    }
 }
