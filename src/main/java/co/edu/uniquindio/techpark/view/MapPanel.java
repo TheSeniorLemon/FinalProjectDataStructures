@@ -618,7 +618,7 @@ public class MapPanel extends JPanel {
 
     private void refreshCombos() {
         String prevFrom = (String) fromCombo.getSelectedItem();
-        String prevTo   = (String) toCombo.getSelectedItem();
+        String prevTo = (String) toCombo.getSelectedItem();
         fromCombo.removeAllItems(); toCombo.removeAllItems();
         fromCombo.addItem(""); toCombo.addItem("");
         LinkedList<Attraction> all = park.listAllAttractions();
@@ -629,7 +629,7 @@ public class MapPanel extends JPanel {
         }
         if (prevFrom != null) selectCombo(fromCombo, prevFrom);
         if (prevTo != null) selectCombo(toCombo, prevTo);
-        canvas.repaint();
+        if (canvas != null) canvas.repaint();
     }
 
     private void selectCombo(JComboBox<String> combo, String name) {
