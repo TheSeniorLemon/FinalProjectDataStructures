@@ -262,27 +262,30 @@ public class MainGUI extends JFrame {
         UserRole role = currentUser.getUserRole();
 
         if (role == UserRole.VISITOR) {
-            //mapPanel = new MapPanel(park);
+            mapPanel = new MapPanel(park);
             contentPanel.add(buildOverviewPanel(), "OVERVIEW");
             contentPanel.add(buildQueuePanel(), "QUEUE");
             contentPanel.add(buildRoutesPanel(), "ROUTES");
+            contentPanel.add(mapPanel, "MAP");
             contentPanel.add(buildFavoritesPanel(), "FAVORITES");
             contentPanel.add(buildHistoryPanel(), "HISTORY");
 
         } else if (role == UserRole.OPERATOR) {
-            //mapPanel = new MapPanel(park);
+            mapPanel = new MapPanel(park);
             contentPanel.add(buildOverviewPanel(), "OVERVIEW");
             contentPanel.add(buildAttractionsPanel(), "ATTRACTIONS");
             contentPanel.add(buildQueueControlPanel(), "QUEUE_OP");
+            contentPanel.add(mapPanel, "MAP");
             contentPanel.add(buildReviewsPanel(), "REVIEWS");
 
         } else { // ADMINISTRATOR
-            //mapPanel = new MapPanel(park);
+            mapPanel = new MapPanel(park);
             contentPanel.add(buildDashboardPanel(), "DASHBOARD");
             contentPanel.add(new VisitorCRUD(park, store), "CRUD_VISITORS");
             contentPanel.add(new OperatorCRUD(park, store), "CRUD_OPERATORS");
             contentPanel.add(new AttractionCRUD(park), "CRUD_ATTRACTIONS");
             contentPanel.add(new ZoneCRUD(park), "CRUD_ZONES");
+            contentPanel.add(mapPanel, "MAP");
             contentPanel.add(buildStaffPanel(), "STAFF");
             contentPanel.add(buildWeatherPanel(), "WEATHER");
             contentPanel.add(buildReportsPanel(), "REPORTS");
