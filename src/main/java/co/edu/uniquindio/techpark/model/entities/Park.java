@@ -551,4 +551,17 @@ public final class Park {
         System.out.println("Day closed.");
         return result;
     }
+
+    public void debugGraph() {
+        System.out.println("=== GRAPH DEBUG ===");
+        System.out.println("Nodes: " + mapGraph.getNumNodes());
+        LinkedList<GraphNode<Attraction>> nodes = mapGraph.getNodes();
+        int n = nodes.getSize();
+        for (int i = 0; i < n; i++) {
+            GraphNode<Attraction> node = nodes.get(i);
+            if (node == null) continue;
+            System.out.println("  " + node.getData().getName()
+                    + " -> edges: " + node.getEdges().getSize());
+        }
+    }
 }

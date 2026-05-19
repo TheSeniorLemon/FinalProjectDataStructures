@@ -54,17 +54,6 @@
       "age": 8,
       "height": 120.0,
       "virtualBalance": 20000.0
-    },
-    {
-      "id": "USR-1778859650789",
-      "name": "Esteban",
-      "document": "1090273807",
-      "email": "estebanpolanco06@gmail.com",
-      "password": "esteban",
-      "profilePhoto": null,
-      "age": 19,
-      "height": 185.0,
-      "virtualBalance": 0.0
     }
   ],
   "operators": [

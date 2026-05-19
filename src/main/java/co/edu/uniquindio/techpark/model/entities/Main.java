@@ -1,6 +1,5 @@
 package co.edu.uniquindio.techpark.model.entities;
 
-import co.edu.uniquindio.techpark.model.entities.*;
 import co.edu.uniquindio.techpark.model.enums.*;
 import co.edu.uniquindio.techpark.service.EmailService;
 import co.edu.uniquindio.techpark.view.LoginGUI;
@@ -8,7 +7,6 @@ import co.edu.uniquindio.techpark.view.LoginGUI;
 import javax.swing.*;
 
 public class Main {
-
     public static void main(String[] args) {
         EmailService.getInstance().configure(
                 "techparkuq@gmail.com",
@@ -22,6 +20,7 @@ public class Main {
             // load persisted data if available, otherwise load defaults
             if (DataManager.usersFileExists() || DataManager.parkFileExists()) {
                 DataManager.load(UserStore.getInstance(), park);
+                loadPaths(park);
                 System.out.println("[Main] Data loaded from files.");
             } else {
                 loadTestData(park);
@@ -39,6 +38,7 @@ public class Main {
         loadZones(park);
         loadAttractions(park);
         loadPaths(park);
+        park.debugGraph();
         loadOperators(park);
         loadAdmins(park);
         loadVisitors(park);
@@ -84,14 +84,22 @@ public class Main {
         Attraction a11 = new Attraction("ATT-011","Racing Simulators", AttractionType.ELECTRONIC_GAME, 12, 0.00f, 10, 15000.0, 15);
         Attraction a12 = new Attraction("ATT-012","Laser Tag Arena", AttractionType.ELECTRONIC_GAME, 20, 0.00f, 6, 10000.0, 20);
 
-        for (Attraction a : new Attraction[]{a1, a2, a3}) { z1.addAttraction(a); park.registerAttractionInCatalog(a); }
-        for (Attraction a : new Attraction[]{a4, a5, a6}) { z2.addAttraction(a); park.registerAttractionInCatalog(a); }
-        for (Attraction a : new Attraction[]{a7, a8, a9}) { z3.addAttraction(a); park.registerAttractionInCatalog(a); }
-        for (Attraction a : new Attraction[]{a10,a11,a12}){ z4.addAttraction(a); park.registerAttractionInCatalog(a); }
+        for (Attraction a : new Attraction[]{a1, a2, a3}) {
+            assert z1 != null;
+            z1.addAttraction(a); park.registerAttractionInCatalog(a); }
+        for (Attraction a : new Attraction[]{a4, a5, a6}) {
+            assert z2 != null;
+            z2.addAttraction(a); park.registerAttractionInCatalog(a); }
+        for (Attraction a : new Attraction[]{a7, a8, a9}) {
+            assert z3 != null;
+            z3.addAttraction(a); park.registerAttractionInCatalog(a); }
+        for (Attraction a : new Attraction[]{a10,a11,a12}){
+            assert z4 != null;
+            z4.addAttraction(a); park.registerAttractionInCatalog(a); }
 
         // demo states
         a2.changeStatus(AttractionStatus.MAINTENANCE, "Scheduled preventive maintenance");
-        a6.changeStatus(AttractionStatus.CLOSED,      "Closed for cleaning");
+        a6.changeStatus(AttractionStatus.CLOSED, "Closed for cleaning");
 
         // demo inspections
         Attraction rc = park.findAttractionByName("Extreme Roller Coaster");

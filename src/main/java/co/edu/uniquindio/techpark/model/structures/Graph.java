@@ -88,7 +88,11 @@ public class Graph<T extends Comparable<T>> {
         int n = nodes.getSize();
         for (int i = 0; i < n; i++) {
             GraphNode<T> node = nodes.get(i);
-            if (node != null && node.getData().compareTo(data) == 0) return node;
+            if (node == null) continue;
+            T nodeData = node.getData();
+            if (nodeData == null) continue;
+            if (nodeData == data) return node;
+            if (nodeData.compareTo(data) == 0) return node;
         }
         return null;
     }

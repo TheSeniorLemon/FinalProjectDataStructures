@@ -54,11 +54,10 @@ public class LinkedList<T> {
         ListNode<T> newNode = new ListNode<>(data);
         if (head == null) {
             head = newNode;
-            tail = newNode;
         } else {
             tail.setNext(newNode);
-            tail = newNode;
         }
+        tail = newNode;
         size++;
     }
 
