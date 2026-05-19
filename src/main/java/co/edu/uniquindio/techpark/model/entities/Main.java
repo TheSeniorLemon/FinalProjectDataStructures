@@ -1,6 +1,7 @@
 package co.edu.uniquindio.techpark.model.entities;
 
 import co.edu.uniquindio.techpark.model.enums.*;
+import co.edu.uniquindio.techpark.model.structures.LinkedList;
 import co.edu.uniquindio.techpark.service.EmailService;
 import co.edu.uniquindio.techpark.view.LoginGUI;
 
@@ -20,6 +21,7 @@ public class Main {
             // load persisted data if available, otherwise load defaults
             if (DataManager.usersFileExists() || DataManager.parkFileExists()) {
                 DataManager.load(UserStore.getInstance(), park);
+                reconnectOperatorsToZones(park);
                 loadPaths(park);
                 System.out.println("[Main] Data loaded from files.");
             } else {
@@ -293,5 +295,20 @@ public class Main {
         System.out.println("ADMIN         ops@techpark.uq           admin123");
         System.out.println("========================================");
         System.out.println();
+    }
+
+    private static void reconnectOperatorsToZones(Park park) {
+        LinkedList<Operator> operators = UserStore.getInstance().getOperators();
+        int n = operators.getSize();
+        for (int i = 0; i < n; i++) {
+            Operator op = operators.get(i);
+            if (op == null || !op.hasAssignedZone()) continue;
+            Zone zone = park.findZone(op.getAssignedZoneId());
+            if (zone != null) {
+                zone.assignOperator(op);
+                park.registerOperator(op);
+            }
+        }
+        System.out.println("[Main] Operators reconnected to zones.");
     }
 }

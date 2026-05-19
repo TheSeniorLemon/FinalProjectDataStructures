@@ -219,7 +219,20 @@ public class MainGUI extends JFrame {
         btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         btn.setMaximumSize(new Dimension(Integer.MAX_VALUE, 42));
         btn.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
-        btn.addActionListener(e -> { contentLayout.show(contentPanel, key); highlightNavButton(key); });
+        btn.addActionListener(e -> {
+            switch (key) {
+                case "OVERVIEW" -> refreshPanel(key, buildOverviewPanel());
+                case "DASHBOARD" -> refreshPanel(key, buildDashboardPanel());
+                case "QUEUE" -> refreshPanel(key, buildQueuePanel());
+                case "QUEUE_OP" -> refreshPanel(key, buildQueueControlPanel());
+                case "STAFF" -> refreshPanel(key, buildStaffPanel());
+                case "CRUD_VISITORS" -> refreshPanel(key, new VisitorCRUD(park, store));
+                case "CRUD_OPERATORS" -> refreshPanel(key, new OperatorCRUD(park, store));
+                case "CRUD_ATTRACTIONS" -> refreshPanel(key, new AttractionCRUD(park));
+                case "CRUD_ZONES" -> refreshPanel(key, new ZoneCRUD(park));
+                default -> { contentLayout.show(contentPanel, key); highlightNavButton(key); }
+            }
+        });
         sidebarPanel.add(btn);
     }
 
@@ -306,6 +319,47 @@ public class MainGUI extends JFrame {
         JPanel root = scrollableRoot();
         root.add(sectionTitle("Park Overview")); root.add(vgap(12));
 
+        // --- visitor account card ---
+        if (currentUser instanceof Visitor visitor) {
+            JPanel accountCard = card();
+            accountCard.setLayout(new BorderLayout(16, 0));
+            accountCard.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
+
+            JPanel accountInfo = vbox();
+            String ticketText = visitor.getTicket() != null
+                    ? visitor.getTicket().getType().name() + "  |  " + visitor.getTicket().getId()
+                    : "No ticket assigned";
+            JLabel ticketLbl = new JLabel("Ticket: " + ticketText);
+            ticketLbl.setFont(F_SMALL); ticketLbl.setForeground(C_TEXT2);
+            JLabel balanceLbl = new JLabel("Balance:  $" + String.format("%,.0f", visitor.getVirtualBalance()));
+            balanceLbl.setFont(new Font("Segoe UI", Font.BOLD, 18));
+            balanceLbl.setForeground(C_SUCCESS);
+            accountInfo.add(balanceLbl); accountInfo.add(vgap(4)); accountInfo.add(ticketLbl);
+
+            JButton btnAddBalance = new JButton("+ Add Balance") {
+                @Override protected void paintComponent(Graphics g) {
+                    Graphics2D g2 = (Graphics2D) g.create();
+                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    g2.setColor(getModel().isRollover() ? C_SUCCESS.brighter() : C_SUCCESS.darker());
+                    g2.fill(new RoundRectangle2D.Float(0,0,getWidth(),getHeight(),8,8));
+                    g2.dispose(); super.paintComponent(g);
+                }
+            };
+            btnAddBalance.setFont(F_BTN); btnAddBalance.setForeground(Color.WHITE);
+            btnAddBalance.setOpaque(false); btnAddBalance.setContentAreaFilled(false);
+            btnAddBalance.setBorderPainted(false); btnAddBalance.setFocusPainted(false);
+            btnAddBalance.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            btnAddBalance.setPreferredSize(new Dimension(130, 38));
+            btnAddBalance.addActionListener(e -> {
+                showAddBalanceDialog(visitor, balanceLbl);
+            });
+
+            accountCard.add(accountInfo,  BorderLayout.CENTER);
+            accountCard.add(btnAddBalance, BorderLayout.EAST);
+            root.add(accountCard); root.add(vgap(16));
+        }
+
+        // --- park stats ---
         JPanel stats = new JPanel(new GridLayout(1, 3, 14, 0));
         stats.setOpaque(false); stats.setMaximumSize(new Dimension(Integer.MAX_VALUE, 90));
         int capacity = park.getMaxCapacity();
@@ -574,42 +628,84 @@ public class MainGUI extends JFrame {
         JPanel root = scrollableRoot();
         root.add(sectionTitle("Register Technical Review")); root.add(vgap(12));
 
-        if (!(currentUser instanceof Operator op)) { root.add(emptyState("Access restricted.")); return wrap(root); }
+        if (!(currentUser instanceof Operator op)) {
+            root.add(emptyState("Access restricted.")); return wrap(root);
+        }
 
-        JPanel form = card(); form.setLayout(new GridBagLayout()); form.setMaximumSize(new Dimension(Integer.MAX_VALUE, 220));
+        // populate combo with attractions from operator's zone
+        JComboBox<String> attractionCombo = new JComboBox<>();
+        if (op.hasAssignedZone()) {
+            Zone zone = park.findZone(op.getAssignedZoneId());
+            if (zone != null) {
+                LinkedList<Attraction> zoneAttractions = zone.getAttractions();
+                int na = zoneAttractions.getSize();
+                for (int i = 0; i < na; i++) {
+                    Attraction a = zoneAttractions.get(i);
+                    if (a != null) attractionCombo.addItem(a.getName());
+                }
+            }
+        }
+        attractionCombo.setFont(F_BODY);
+        attractionCombo.setBackground(C_CARD);
+        attractionCombo.setForeground(C_TEXT);
+        attractionCombo.setMaximumSize(new Dimension(Integer.MAX_VALUE, 38));
+
+        if (attractionCombo.getItemCount() == 0) {
+            root.add(emptyState("No attractions in your assigned zone."));
+            return wrap(root);
+        }
+
+        JPanel form = card(); form.setLayout(new GridBagLayout());
+        form.setMaximumSize(new Dimension(Integer.MAX_VALUE, 240));
         GridBagConstraints g = gbc();
 
-        g.gridy=0; g.insets=ins(12,16,4,16);  form.add(smallLabel("Attraction name"), g);
-        JTextField attractionField = textField("Attraction name");
-        g.gridy=1; g.insets=ins(0,16,10,16);  form.add(attractionField, g);
-        g.gridy=2; g.insets=ins(0,16,4,16);   form.add(smallLabel("Result"), g);
+        g.gridy=0; g.insets=ins(12,16,4,16); form.add(smallLabel("Attraction"), g);
+        g.gridy=1; g.insets=ins(0,16,10,16); form.add(attractionCombo, g);
+
+        g.gridy=2; g.insets=ins(0,16,4,16); form.add(smallLabel("Result"), g);
         JTextField resultField = textField("e.g. All systems operational");
-        g.gridy=3; g.insets=ins(0,16,10,16);  form.add(resultField, g);
-        g.gridy=4; g.insets=ins(0,16,4,16);   form.add(smallLabel("Notes (optional)"), g);
+        g.gridy=3; g.insets=ins(0,16,10,16); form.add(resultField, g);
+
+        g.gridy=4; g.insets=ins(0,16,4,16); form.add(smallLabel("Notes (optional)"), g);
         JTextField notesField = textField("Additional notes...");
-        g.gridy=5; g.insets=ins(0,16,10,16);  form.add(notesField, g);
+        g.gridy=5; g.insets=ins(0,16,10,16); form.add(notesField, g);
+
         JCheckBox chk = new JCheckBox("Inspection passed successfully");
         chk.setFont(F_LABEL); chk.setForeground(C_TEXT); chk.setOpaque(false); chk.setSelected(true);
-        g.gridy=6; g.insets=ins(0,16,12,16);  form.add(chk, g);
+        g.gridy=6; g.insets=ins(0,16,12,16); form.add(chk, g);
+
         root.add(form); root.add(vgap(12));
 
-        JLabel msgLabel = new JLabel(" ", SwingConstants.LEFT); msgLabel.setFont(F_LABEL); msgLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        JButton btnSubmit = primaryButton("Submit review"); btnSubmit.setMaximumSize(new Dimension(220, 42));
+        JLabel msgLabel = new JLabel(" ", SwingConstants.LEFT);
+        msgLabel.setFont(F_LABEL); msgLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        JButton btnSubmit = primaryButton("Submit review");
+        btnSubmit.setMaximumSize(new Dimension(220, 42));
         root.add(btnSubmit); root.add(vgap(10)); root.add(msgLabel);
 
         btnSubmit.addActionListener(e -> {
-            String attName = attractionField.getText().trim();
+            String attName = (String) attractionCombo.getSelectedItem();
             String result  = resultField.getText().trim();
-            if (attName.isEmpty() || result.isEmpty()) { msgLabel.setForeground(C_DANGER); msgLabel.setText("Please fill in attraction name and result."); return; }
+            if (attName == null || attName.isEmpty()) {
+                msgLabel.setForeground(C_DANGER); msgLabel.setText("Select an attraction."); return;
+            }
+            if (result.isEmpty()) {
+                msgLabel.setForeground(C_DANGER); msgLabel.setText("Fill in the result field."); return;
+            }
             Attraction target = park.findAttractionByName(attName);
-            if (target == null) { msgLabel.setForeground(C_DANGER); msgLabel.setText("Attraction not found: " + attName); return; }
+            if (target == null) {
+                msgLabel.setForeground(C_DANGER); msgLabel.setText("Attraction not found."); return;
+            }
             TechnicalInspection review = new TechnicalInspection(
-                    "REV-" + System.currentTimeMillis(), java.time.LocalDateTime.now().toString(),
-                    op.getId(), op.getName(), result, notesField.getText().trim(), chk.isSelected()
+                    "REV-" + System.currentTimeMillis(),
+                    java.time.LocalDateTime.now().toString(),
+                    op.getId(), op.getName(), result,
+                    notesField.getText().trim(), chk.isSelected()
             );
             op.registerInspection(target, review);
-            msgLabel.setForeground(C_SUCCESS); msgLabel.setText("Review submitted for " + target.getName() + ".");
-            attractionField.setText(""); resultField.setText(""); notesField.setText(""); chk.setSelected(true);
+            DataManager.save(store, park);
+            msgLabel.setForeground(C_SUCCESS);
+            msgLabel.setText("Review submitted for " + target.getName() + ".");
+            resultField.setText(""); notesField.setText(""); chk.setSelected(true);
         });
         return wrap(root);
     }
@@ -995,6 +1091,95 @@ public class MainGUI extends JFrame {
 
     private GridBagConstraints gbc() { GridBagConstraints g=new GridBagConstraints(); g.gridx=0; g.fill=GridBagConstraints.HORIZONTAL; g.weightx=1.0; return g; }
     private Insets ins(int t,int l,int b,int r) { return new Insets(t,l,b,r); }
+
+    private void showAddBalanceDialog(Visitor visitor, JLabel balanceLbl) {
+        JDialog dialog = new JDialog(this, "Add Balance", true);
+        dialog.setSize(380, 320);
+        dialog.setLocationRelativeTo(this);
+        dialog.getContentPane().setBackground(C_BG);
+
+        JPanel root = new JPanel();
+        root.setOpaque(false);
+        root.setLayout(new BoxLayout(root, BoxLayout.Y_AXIS));
+        root.setBorder(BorderFactory.createEmptyBorder(20, 24, 20, 24));
+
+        JLabel title = new JLabel("Simulate Card Payment");
+        title.setFont(F_TITLE); title.setForeground(C_TEXT); title.setAlignmentX(Component.LEFT_ALIGNMENT);
+        root.add(title); root.add(vgap(16));
+
+        // card number (decorative)
+        JPanel cardDisplay = card();
+        cardDisplay.setMaximumSize(new Dimension(Integer.MAX_VALUE, 52));
+        cardDisplay.setLayout(new BorderLayout());
+        JLabel cardNum = new JLabel("**** **** **** 4242");
+        cardNum.setFont(new Font("Courier New", Font.BOLD, 16));
+        cardNum.setForeground(C_TEXT2);
+        JLabel visa = new JLabel("VISA");
+        visa.setFont(new Font("Segoe UI", Font.BOLD, 14)); visa.setForeground(C_PRIMARY);
+        cardDisplay.add(cardNum, BorderLayout.WEST); cardDisplay.add(visa, BorderLayout.EAST);
+        root.add(cardDisplay); root.add(vgap(14));
+
+        JLabel amountLbl = new JLabel("Amount to add ($)");
+        amountLbl.setFont(F_LABEL); amountLbl.setForeground(C_TEXT2); amountLbl.setAlignmentX(Component.LEFT_ALIGNMENT);
+        root.add(amountLbl); root.add(vgap(4));
+
+        // preset amounts
+        JPanel presets = new JPanel(new GridLayout(1, 4, 8, 0));
+        presets.setOpaque(false); presets.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
+        String[] amounts = {"20,000", "50,000", "100,000", "200,000"};
+        JTextField amountField = textField("e.g. 50000");
+        amountField.setAlignmentX(Component.LEFT_ALIGNMENT);
+        amountField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 38));
+
+        for (String amt : amounts) {
+            JButton b = new JButton("$" + amt);
+            b.setFont(F_SMALL); b.setForeground(C_PRIMARY);
+            b.setBackground(new Color(20, 35, 70));
+            b.setBorder(BorderFactory.createLineBorder(C_PRIMARY));
+            b.setFocusPainted(false);
+            b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            b.addActionListener(e -> amountField.setText(amt.replace(",", "")));
+            presets.add(b);
+        }
+        root.add(presets); root.add(vgap(8));
+        root.add(amountField); root.add(vgap(14));
+
+        JLabel msgLbl = new JLabel(" ");
+        msgLbl.setFont(F_LABEL); msgLbl.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JButton btnPay = primaryButton("Pay now");
+        btnPay.setMaximumSize(new Dimension(Integer.MAX_VALUE, 42));
+        root.add(btnPay); root.add(vgap(8)); root.add(msgLbl);
+
+        btnPay.addActionListener(e -> {
+            String raw = amountField.getText().trim().replace(",", "").replace(".", "");
+            double amount;
+            try {
+                amount = Double.parseDouble(raw);
+                if (amount <= 0) throw new NumberFormatException();
+            } catch (NumberFormatException ex) {
+                msgLbl.setForeground(C_DANGER); msgLbl.setText("Enter a valid positive amount."); return;
+            }
+            // simulate processing
+            btnPay.setEnabled(false); btnPay.setText("Processing...");
+            msgLbl.setForeground(C_TEXT2); msgLbl.setText("Contacting bank...");
+
+            javax.swing.Timer timer = new javax.swing.Timer(900, ev -> {
+                visitor.addBalance(amount);
+                DataManager.save(store, park);
+                balanceLbl.setText("Balance:  $" + String.format("%,.0f", visitor.getVirtualBalance()));
+                dialog.dispose();
+                JOptionPane.showMessageDialog(this,
+                        "Payment successful!\n$" + String.format("%,.0f", amount) + " added to your balance.\nNew balance: $" + String.format("%,.0f", visitor.getVirtualBalance()),
+                        "Payment approved", JOptionPane.INFORMATION_MESSAGE);
+            });
+            timer.setRepeats(false);
+            timer.start();
+        });
+
+        dialog.add(root);
+        dialog.setVisible(true);
+    }
 
     // ================================================================
     // utility
