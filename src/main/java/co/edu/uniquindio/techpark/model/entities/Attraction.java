@@ -243,6 +243,10 @@ public class Attraction implements Comparable<Attraction> {
         return virtualQueue.getPosition(visitor);
     }
 
+    public boolean removeFromVirtualQueue(Visitor visitor) {
+        return virtualQueue.remove(visitor);
+    }
+
     // ----------------------------------------------------------------
     // status and maintenance
     // ----------------------------------------------------------------

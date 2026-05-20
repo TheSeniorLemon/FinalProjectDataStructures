@@ -226,6 +226,8 @@ public class MainGUI extends JFrame {
                 case "QUEUE" -> refreshPanel(key, buildQueuePanel());
                 case "QUEUE_OP" -> refreshPanel(key, buildQueueControlPanel());
                 case "STAFF" -> refreshPanel(key, buildStaffPanel());
+                case "FAVORITES" -> refreshPanel(key, buildFavoritesPanel());
+                case "HISTORY" -> refreshPanel(key, buildHistoryPanel());
                 case "CRUD_VISITORS" -> refreshPanel(key, new VisitorCRUD(park, store));
                 case "CRUD_OPERATORS" -> refreshPanel(key, new OperatorCRUD(park, store));
                 case "CRUD_ATTRACTIONS" -> refreshPanel(key, new AttractionCRUD(park));
@@ -275,7 +277,7 @@ public class MainGUI extends JFrame {
         UserRole role = currentUser.getUserRole();
 
         if (role == UserRole.VISITOR) {
-            mapPanel = new MapPanel(park);
+            mapPanel = new MapPanel(park, currentUser);
             contentPanel.add(buildOverviewPanel(), "OVERVIEW");
             contentPanel.add(buildQueuePanel(), "QUEUE");
             contentPanel.add(buildRoutesPanel(), "ROUTES");
@@ -284,7 +286,7 @@ public class MainGUI extends JFrame {
             contentPanel.add(buildHistoryPanel(), "HISTORY");
 
         } else if (role == UserRole.OPERATOR) {
-            mapPanel = new MapPanel(park);
+            mapPanel = new MapPanel(park, currentUser);
             contentPanel.add(buildOverviewPanel(), "OVERVIEW");
             contentPanel.add(buildAttractionsPanel(), "ATTRACTIONS");
             contentPanel.add(buildQueueControlPanel(), "QUEUE_OP");
@@ -292,7 +294,7 @@ public class MainGUI extends JFrame {
             contentPanel.add(buildReviewsPanel(), "REVIEWS");
 
         } else { // ADMINISTRATOR
-            mapPanel = new MapPanel(park);
+            mapPanel = new MapPanel(park, currentUser);
             contentPanel.add(buildDashboardPanel(), "DASHBOARD");
             contentPanel.add(new VisitorCRUD(park, store), "CRUD_VISITORS");
             contentPanel.add(new OperatorCRUD(park, store), "CRUD_OPERATORS");

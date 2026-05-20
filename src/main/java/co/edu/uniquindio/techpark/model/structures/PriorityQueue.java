@@ -106,4 +106,29 @@ public class PriorityQueue<T> {
         head = null;
         size = 0;
     }
+
+    public boolean remove(T element) {
+        if (element == null || head == null) return false;
+
+        // remove head
+        if (head.getData().equals(element)) {
+            head = head.getNext();
+            size--;
+            return true;
+        }
+
+        // remove mid / tail
+        QueueNode<T> prev = head;
+        QueueNode<T> curr = head.getNext();
+        while (curr != null) {
+            if (curr.getData().equals(element)) {
+                prev.setNext(curr.getNext());
+                size--;
+                return true;
+            }
+            prev = curr;
+            curr = curr.getNext();
+        }
+        return false;
+    }
 }
